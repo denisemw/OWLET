@@ -37,23 +37,10 @@
   <p align="center">
     Thanks for checking out our software! OWLET is designed to process infant 
     gaze and looking behavior using webcam videos recorded on laptops or
-    smartphones. If you use this software in your
-    research, please cite us as:
+    smartphones. If you use this software in your research, please cite us as:
+    
     Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
     open-source, robust, and scalable method for infant webcam eye tracking.
-    
-    <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
-  </p>
-</div>
-
 
 
 <!-- TABLE OF CONTENTS -->
