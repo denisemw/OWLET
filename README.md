@@ -40,7 +40,22 @@
     smartphones. If you use this software in your research, please cite us as:
     
     Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
-    open-source, robust, and scalable method for infant webcam eye tracking.
+    open-source, robust, and scalable method for infant webcam eye tracking.</h3>
+    
+        
+ <br />
+    <a href="https://github.com/denisemw/OWLET"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/denisemw/OWLET">View Demo</a>
+    ·
+    <a href="https://github.com/denisemw/OWLET/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/denisemw/OWLET/issues">Request Feature</a>
+  </p>
+</div>
+
+
 
 
 <!-- TABLE OF CONTENTS -->
@@ -76,22 +91,20 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email`, `email_client`, `project_title`, `project_description`
+Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `denisemw`, `OWLET`, `DeniseWerchan`, `denise-werchan`, `email`, `email_client`, `OWLET`, `project_description`
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
-### Built With
+### Built in Python v. 3.8.8. With 
 
-* [Next.js](https://nextjs.org/)
-* [React.js](https://reactjs.org/)
-* [Vue.js](https://vuejs.org/)
-* [Angular](https://angular.io/)
-* [Svelte](https://svelte.dev/)
-* [Laravel](https://laravel.com)
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
+* [opencv]( https://pypi.org/project/opencv-python/)
+* [dlib]( http://dlib.net)
+* [numpy]( https://numpy.org/)
+* [pandas]( https://pandas.pydata.org/)
+* [scipy]( https://scipy.org/)
+* [librosa]( https://librosa.org/doc/latest/index.html/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -100,33 +113,18 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy of this software up and running follow these steps:
 
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+First, install the above packages using pip or conda install:
+* opencv
   ```sh
-  npm install npm@latest -g
+  conda install opencv-python
   ```
 
-### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+Second, download or clone the repo:
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/denisemw/OWLET.git
    ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -134,23 +132,24 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Below is an example of a processed eye tracking video.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+<video width="816" height="230" controls>
+      <source src=” https://github.com/denisemw/OWLET/demo.mp4” type=video/mp4>
+ </video>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
+<!—BEST PRACTICES AND HELPFUL TIPS -->
+## Acknowledgments
 
-<!-- ROADMAP -->
-## Roadmap
+OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos.
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+<a href="https://github.com/denisemw/OWLET">
+    <img src="owlet_reqs.png" alt="Best Practices" width="800" height="251">
+  </a>
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -177,7 +176,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the GNU General Public License v3.0. See `LICENSE` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -186,37 +185,30 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Denise Werchan - [@DeniseWerchan](https://twitter.com/DeniseWerchan) – denise.werchan@nyulangone.org
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
+Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OWLET)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/denisemw/OWLET.svg?style=for-the-badge
+[contributors-url]: https://github.com/denisemw/OWLET/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/denisemw/OWLET.svg?style=for-the-badge
+[forks-url]: https://github.com/denisemw/OWLET/network/members
+[stars-shield]: https://img.shields.io/github/stars/denisemw/OWLET.svg?style=for-the-badge
+[stars-url]: https://github.com/denisemw/OWLET/stargazers
+[issues-shield]: https://img.shields.io/github/issues/denisemw/OWLET.svg?style=for-the-badge
+[issues-url]: https://github.com/denisemw/OWLET/issues
+[license-shield]: https://img.shields.io/github/license/denisemw/OWLET.svg?style=for-the-badge
+[license-url]: https://github.com/denisemw/OWLET/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
+[linkedin-url]: https://linkedin.com/in/denise-werchan
+[product-screenshot]: owlet_logo.png
+![image](https://user-images.githubusercontent.com/7503173/153013523-5e52a65c-8a51-43c7-bf98-e526d7673d5f.png)
