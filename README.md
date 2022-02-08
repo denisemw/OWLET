@@ -72,7 +72,7 @@ Below is an example of a processed eye tracking video.
 
 OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos. <br><br>
 <div align="center">
-<h4 >Tips for Recording Videos:</h4>
+<h3 >Tips for Recording Videos:</h3>
 <a href="https://github.com/denisemw/OWLET">
     <img src="owlet_reqs.png" alt="Best Practices" width="576" height="691">
   </a>
@@ -142,4 +142,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 </p>
     
 
-![image](https://user-images.githubusercontent.com/7503173/153025530-a4b4142a-13b4-4bef-891b-6468887f9eac.png)
+![image](https://user-images.githubusercontent.com/7503173/153025655-80c5347d-d376-4018-834e-9ee6e12eaa5b.png)
