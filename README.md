@@ -2,11 +2,13 @@
 
 <div id="top"></div>
 <!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
+*** Thanks for checking out OWLET - an open source solution for webcam-based 
+*** eye tracking with infants and children. If you use this software in your
+*** research, please cite us as:
+***
+*** Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
+*** open-source, robust, and scalable method for infant webcam eye tracking.
+*** 
 -->
 
 
@@ -31,8 +33,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/denisemw/OWLET">
+    <img src="images/logo.png" alt="OWLET" width="80" height="80">
   </a>
 
 <h3 align="center">project_title</h3>
