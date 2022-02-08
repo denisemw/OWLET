@@ -13,11 +13,8 @@
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker
-
-    
-<!-- ABOUT THE PROJECT -->
-## About The Project
+    <!-- ABOUT THE PROJECT -->
+## OWLET – an open-source webcam-linked eye tracker
 
 Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as:
     
@@ -266,4 +263,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153020954-84eafaff-f26e-47a7-8629-ef019b26044b.png)
+![image](https://user-images.githubusercontent.com/7503173/153021171-f8225a2b-7e64-4117-971c-5e7d6490f392.png)
