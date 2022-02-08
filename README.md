@@ -33,7 +33,7 @@
 * [scipy]( https://scipy.org/)
 * [librosa]( https://librosa.org/doc/latest/index.html/)
 
-<p align="left">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
@@ -70,8 +70,9 @@ Below is an example of a processed eye tracking video.
 <!—BEST PRACTICES AND HELPFUL TIPS -->
 ## Best Practices and Helpful Tips
 
-OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos.
+OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos. <br><br>
 <div align="center">
+#### Tips for Recording Videos:
 <a href="https://github.com/denisemw/OWLET">
     <img src="owlet_reqs.png" alt="Best Practices" width="576" height="691">
   </a>
@@ -140,4 +141,5 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [product-screenshot]: owlet_logo.png
 </p>
     
-![image](https://user-images.githubusercontent.com/7503173/153024904-12662884-880d-48c6-9f18-3696ab5a2d61.png)
+
+![image](https://user-images.githubusercontent.com/7503173/153025279-db630e90-5fe1-42c5-84f4-6d1702e81e84.png)
