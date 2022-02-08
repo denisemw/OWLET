@@ -13,7 +13,7 @@
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="right">
+<h3 align="left"> </h3>
 
     
 <!-- ABOUT THE PROJECT -->
@@ -263,4 +263,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153021606-56eda7eb-22d8-4738-ae99-f26bba91d03d.png)
+![image](https://user-images.githubusercontent.com/7503173/153022182-a06cb70d-ee99-464c-ab27-bd623277dff2.png)
