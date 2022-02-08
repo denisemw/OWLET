@@ -1,4 +1,3 @@
-# OWLET
 
 <div id="top"></div>
 <!--
@@ -16,7 +15,12 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -27,7 +31,7 @@
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker</h3>
+<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker
 
   <p align="center">
     Thanks for checking out our software! OWLET is designed to process infant 
@@ -128,7 +132,9 @@ Second, download or clone the repo:
 
 Below is an example of a processed eye tracking video.
 
-<video src=' https://github.com/denisemw/OWLET/demo.mp4' width=816 />
+<video width="816" height="230" controls>
+      <source src=” https://github.com/denisemw/OWLET/demo.mp4” type=video/mp4>
+ </video>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -203,4 +209,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153015657-573d10ff-41bb-4de6-8054-094ab1c16cd2.png)
+![image](https://user-images.githubusercontent.com/7503173/153016258-beee590e-947a-49b9-9ffd-eb8ff37826c4.png)
