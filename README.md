@@ -8,14 +8,13 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="left">
+<div align="center">
   <a href="https://github.com/denisemw/OWLET">
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="left"> </h3>
+<div align="left">
 
-    
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -140,4 +139,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [product-screenshot]: owlet_logo.png
 </p>
     
-![image](https://user-images.githubusercontent.com/7503173/153024281-eef7d08b-1e03-4c9c-917b-33cfb6700f74.png)
+![image](https://user-images.githubusercontent.com/7503173/153024494-11a6ca31-978c-40b4-876c-6533a2af2a87.png)
