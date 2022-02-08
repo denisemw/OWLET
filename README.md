@@ -48,7 +48,6 @@
     Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
     open-source, robust, and scalable method for infant webcam eye tracking.
 
-<p align="center">(<a href="#top">back to top</a>)</p>
 
     
 <!-- ABOUT THE PROJECT -->
@@ -298,4 +297,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153020245-ac9f51ee-6ca4-4944-b271-7fed449ae407.png)
+![image](https://user-images.githubusercontent.com/7503173/153020309-baa2ce5b-ea90-4398-9ef2-45fbb9fca0a6.png)
