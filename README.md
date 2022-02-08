@@ -2,12 +2,7 @@
 
 <div id="top"></div>
 <!--
-*** Thanks for checking out OWLET - an open source solution for webcam-based 
-*** eye tracking with infants and children. If you use this software in your
-*** research, please cite us as:
-***
-*** Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
-*** open-source, robust, and scalable method for infant webcam eye tracking.
+*** 
 *** 
 -->
 
@@ -34,13 +29,18 @@
 <br />
 <div align="center">
   <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_logo.png" alt="OWLET" width="894" height="280">
+    <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker</h3>
 
   <p align="center">
-    project_description
+    Thanks for checking out OWLET - an open source solution for webcam-based 
+    eye tracking with infants and children. If you use this software in your
+    research, please cite us as:
+
+    Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
+    open-source, robust, and scalable method for infant webcam eye tracking.
     <br />
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
     <br />
