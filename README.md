@@ -122,5 +122,3 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [product-screenshot]: owlet_logo.png
 </p>
     
-
-![image](https://user-images.githubusercontent.com/7503173/153025829-c7d53913-6afc-4f11-a6a6-46b77acfb01b.png)
