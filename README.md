@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
+    <img src="owlet_logo.png" alt="OWLET" width="720" height="226">
   </a>
 
 <div align="left">
@@ -58,14 +58,17 @@ Second, download or clone the repo:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Below is an example of a Zoom video processed using OWLET.
+Below is an example of a Zoom video processed using OWLET.<br><br>
   
+<div align="center">
+<h3 >OWLET Demo:</h3>
 ![OWLET Demo](demo.gif)
+<div align="left">
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!—BEST PRACTICES AND HELPFUL TIPS -->
+<!-- BEST PRACTICES -->
 ## Best Practices and Helpful Tips
 
 OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos. <br><br>
