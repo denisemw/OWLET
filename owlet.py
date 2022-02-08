@@ -406,10 +406,10 @@ def main():
 
     sub_count = 0
     sub_list = []
-    for file in os.listdir("gaze_tracking/task/"):
+    for file in os.listdir("gaze_tracking/example_task/"):
         if file.endswith(".mp4") or file.endswith(".mov"):
             sub_list.append(file)
-            print(os.path.join("gaze_tracking/task/", file))
+            print(os.path.join("gaze_tracking/example_task/", file))
     cwd = os.path.abspath(os.path.dirname(__file__))
   
     for sub in sub_list:
@@ -417,10 +417,10 @@ def main():
             # change to 0 to skip calibration and use preset values instead
             calibrate = 1
             
-            videoFilename = "gaze_tracking/task/" + sub 
-            taskFilename = "gaze_tracking/task/task_videos/task_" + sub 
-            calib_filename = "gaze_tracking/task/calibration_files/calibration_" + sub 
-            outfilename = "gaze_tracking/task/annotated_videos/annotated_" + sub
+            videoFilename = "gaze_tracking/example_task/" + sub 
+            taskFilename = "gaze_tracking/example_task/task_videos/task_" + sub 
+            calib_filename = "gaze_tracking/example_task/calibration_files/calibration_" + sub 
+            outfilename = "gaze_tracking/example_task/annotated_videos/annotated_" + sub
             calib_file = os.path.abspath(os.path.join(cwd, calib_filename))
             videoFile = os.path.abspath(os.path.join(cwd, videoFilename))
             taskFile = os.path.abspath(os.path.join(cwd, taskFilename))
@@ -488,7 +488,7 @@ def main():
             print("Done: " + sub)
             cv2.destroyAllWindows()
             
-            file4 = "gaze_tracking/task/csv_output/" + sub + ".csv"
+            file4 = "gaze_tracking/example_task/csv_output/" + sub + ".csv"
             filename4 = os.path.abspath(os.path.join(cwd, file4))
             
             df.to_csv(filename4, index = False)
