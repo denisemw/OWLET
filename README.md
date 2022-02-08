@@ -62,7 +62,9 @@ Below is an example of a Zoom video processed using OWLET.<br><br>
   
 <div align="center">
 <h3 >OWLET Demo:</h3>
-![OWLET Demo](demo.gif)
+<a href="https://github.com/denisemw/OWLET">
+    <img src="demo.gif" alt="OWLET Demo">
+  </a>
 <div align="left">
 
 <p align="right">(<a href="#top">back to top</a>)</p>
