@@ -1,26 +1,10 @@
+# OWLET
 
 <div id="top"></div>
 <!--
 *** 
 *** 
 -->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -36,10 +20,10 @@
   <p align="center">
     Thanks for checking out our software! OWLET is designed to process infant 
     gaze and looking behavior using webcam videos recorded on laptops or
-    smartphones. If you use this software in your research, please cite us as:
+    smartphones. If you use this software in your research, please cite as:
     
     Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
-    open-source, robust, and scalable method for infant webcam eye tracking.</h3>
+    open-source, robust, and scalable method for infant webcam eye tracking.
     
         
  <br />
@@ -90,7 +74,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `denisemw`, `OWLET`, `DeniseWerchan`, `denise-werchan`, `email`, `email_client`, `OWLET`, `project_description`
+This software was developed for processing infant gaze data from videos recorded through laptops or smartphone webcams. OWLET was designed for post-processing of gaze data using previously recorded videos. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -145,7 +129,7 @@ Below is an example of a processed eye tracking video.
 OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos.
 
 <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_reqs.png" alt="Best Practices" width="800" height="251">
+    <img src="owlet_reqs.png" alt="Best Practices" width="251" height="800">
   </a>
 
 
@@ -209,4 +193,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153016258-beee590e-947a-49b9-9ffd-eb8ff37826c4.png)
+![image](https://user-images.githubusercontent.com/7503173/153017147-a8447c02-c228-486e-aae2-e36aba00394b.png)
