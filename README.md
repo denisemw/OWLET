@@ -13,7 +13,7 @@
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
 
-<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker</h3>
+<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker
 
     
 <!-- ABOUT THE PROJECT -->
@@ -77,7 +77,7 @@ Below is an example of a processed eye tracking video.
 OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos.
 
 <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_reqs.png" alt="Best Practices" width="251" height="800">
+    <img src="owlet_reqs.png" alt="Best Practices">
   </a>
 
 
@@ -266,4 +266,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153020809-4afed6d7-b90a-428a-8b2a-1c785ab43b7d.png)
+![image](https://user-images.githubusercontent.com/7503173/153020954-84eafaff-f26e-47a7-8629-ef019b26044b.png)
