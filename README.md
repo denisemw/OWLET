@@ -15,16 +15,14 @@
 
 <h3 align="left"> </h3>
 
-<div style="text-align: left">
     
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an open-source, robust, and scalable method for infant webcam eye tracking. </>
+<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an open-source, robust, and scalable method for infant webcam eye tracking. </p>
 
-<p align="right">(<a href="#top">back to top</a>)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-</div>
 
 
 ### Built using Python v. 3.8.8. with 
@@ -142,4 +140,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [product-screenshot]: owlet_logo.png
 </p>
     
-![image](https://user-images.githubusercontent.com/7503173/153023874-48cfd68b-e1bd-4723-9e2b-2403f81a04d7.png)
+![image](https://user-images.githubusercontent.com/7503173/153024186-8b21015a-0489-4bd8-9e09-a6bfd1bebb0c.png)
