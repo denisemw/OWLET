@@ -74,7 +74,7 @@ OWLET works best with high quality videos, and some tips are shown below. In add
 <div align="center">
 <h3 >Tips for Recording Videos:</h3>
 <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_reqs.png" alt="Best Practices" width="576" height="691">
+    <img src="owlet_reqs.png" alt="Best Practices" width="360" height="432">
   </a>
 
 <div align="left">
@@ -142,4 +142,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 </p>
     
 
-![image](https://user-images.githubusercontent.com/7503173/153025655-80c5347d-d376-4018-834e-9ee6e12eaa5b.png)
+![image](https://user-images.githubusercontent.com/7503173/153025829-c7d53913-6afc-4f11-a6a6-46b77acfb01b.png)
