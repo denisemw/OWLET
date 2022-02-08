@@ -34,7 +34,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_logo.png" alt="OWLET" width="180" height="80">
+    <img src="owlet_logo.png" alt="OWLET" width="960" height="300">
   </a>
 
 <h3 align="center">project_title</h3>
