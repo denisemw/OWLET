@@ -16,12 +16,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+
 
 
 
@@ -97,7 +92,7 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 
 
 
-### Built in Python v. 3.8.8. With 
+### Built using Python v. 3.8.8. with 
 
 * [opencv]( https://pypi.org/project/opencv-python/)
 * [dlib]( http://dlib.net)
@@ -116,9 +111,8 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 To get a local copy of this software up and running follow these steps:
 
 First, install the above packages using pip or conda install:
-* opencv
   ```sh
-  conda install opencv-python
+pip install opencv-python dlib numpy pandas scipy librosa
   ```
 
 Second, download or clone the repo:
@@ -134,15 +128,13 @@ Second, download or clone the repo:
 
 Below is an example of a processed eye tracking video.
 
-<video width="816" height="230" controls>
-      <source src=” https://github.com/denisemw/OWLET/demo.mp4” type=video/mp4>
- </video>
+<video src=' https://github.com/denisemw/OWLET/demo.mp4' width=816 />
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!—BEST PRACTICES AND HELPFUL TIPS -->
-## Acknowledgments
+## Best Practices and Helpful Tips
 
 OWLET works best with high quality videos, and some tips are shown below. In addition, you can alter videos in editing software (e.g., iMovie) to change the contrast/brightness or crop in on the subject’s face, which can improve performance for poor quality videos.
 
@@ -185,7 +177,7 @@ Distributed under the GNU General Public License v3.0. See `LICENSE` for more in
 <!-- CONTACT -->
 ## Contact
 
-Denise Werchan - [@DeniseWerchan](https://twitter.com/DeniseWerchan) – denise.werchan@nyulangone.org
+Denise Werchan - [denisewerchan.com](https://denisewerchan.com) – [@DeniseWerchan](https://twitter.com/DeniseWerchan) – denise.werchan@nyulangone.org
 
 Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OWLET)
 
@@ -211,4 +203,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153013523-5e52a65c-8a51-43c7-bf98-e526d7673d5f.png)
+![image](https://user-images.githubusercontent.com/7503173/153015657-573d10ff-41bb-4de6-8054-094ab1c16cd2.png)
