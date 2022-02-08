@@ -58,11 +58,9 @@ Second, download or clone the repo:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Below is an example of a processed eye tracking video.
-
-<video width="816" height="230" controls>
-      <source src=” https://github.com/denisemw/OWLET/demo.mp4” type=video/mp4>
- </video>
+Below is an example of a Zoom video processed using OWLET.
+  
+![OWLET Demo](demo.gif)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
