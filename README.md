@@ -8,7 +8,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
+<div align="left">
   <a href="https://github.com/denisemw/OWLET">
     <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
   </a>
@@ -140,4 +140,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [product-screenshot]: owlet_logo.png
 </p>
     
-![image](https://user-images.githubusercontent.com/7503173/153024186-8b21015a-0489-4bd8-9e09-a6bfd1bebb0c.png)
+![image](https://user-images.githubusercontent.com/7503173/153024281-eef7d08b-1e03-4c9c-917b-33cfb6700f74.png)
