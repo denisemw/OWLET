@@ -15,45 +15,14 @@
 
 <h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker</h3>
 
-  <p align="center">
-
-    Thanks for checking out our software! OWLET is designed to process infant 
-    gaze and looking behavior using webcam videos recorded on laptops or
-    smartphones. If you use this software in your research, please cite as:
-    
-    Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
-    open-source, robust, and scalable method for infant webcam eye tracking. 
-
-# OWLET
-
-<div id="top"></div>
-<!--
-*** 
-*** 
--->
-
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/denisemw/OWLET">
-    <img src="owlet_logo.png" alt="OWLET" width="800" height="251">
-  </a>
-
-<h3 align="center">OWLET - an Open-Source Webcam-Linked Eye Tracker</h3>
-
-    Thanks for checking out our software! OWLET is designed to process infant 
-    gaze and looking behavior using webcam videos recorded on laptops or
-    smartphones. If you use this software in your research, please cite as:
-    
-    Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
-    open-source, robust, and scalable method for infant webcam eye tracking.
-
-
     
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This software was developed for processing infant gaze data from videos recorded through laptops or smartphone webcams. Currently, OWLET is configured to support processing of gaze data using previously recorded videos, but future iterations will support synchronous data collection. 
+Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as:
+    
+    Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an 
+    open-source, robust, and scalable method for infant webcam eye tracking. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -297,4 +266,4 @@ Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OW
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/denise-werchan
 [product-screenshot]: owlet_logo.png
-![image](https://user-images.githubusercontent.com/7503173/153020309-baa2ce5b-ea90-4398-9ef2-45fbb9fca0a6.png)
+![image](https://user-images.githubusercontent.com/7503173/153020809-4afed6d7-b90a-428a-8b2a-1c785ab43b7d.png)
