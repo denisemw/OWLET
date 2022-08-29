@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/denisemw/OWLET">
-    <img src="Images/owlet_logo.png" alt="OWLET" width="720" height="226">
+    <img src="eyetracker/Images/owlet_logo.png" alt="OWLET" width="720" height="226">
   </a>
 
 <div align="left">
@@ -18,7 +18,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: an open-source, robust, and scalable method for infant webcam eye tracking. </p>
+<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET using a user interface can be found at: [opencv](https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>
+  
+  
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -40,20 +42,55 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy of this software up and running follow these steps:
+To get a local copy of this software up and running, first clone this repository:
 
-First, install the above packages using pip or conda install:
-  ```sh
-pip install opencv-python dlib numpy pandas scipy librosa
-  ```
-
-Second, download or clone the repo:
    ```sh
    git clone https://github.com/denisemw/OWLET.git
    ```
+Second, navigate to the OWLET directory and create a virtual environment. Install Anaconda if needed, then create an environment using the owlet_environment.yml file in this repository:
+  
+   ```sh
+   conda env create -n owlet_env -f owlet_environment.yml
+   ```
+Then, activate the environment:
+  
+   ```sh
+   conda activate owlet_env
+   ```
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
+  
+  <!-- RUNNING OWLET -->
+## Running OWLET
+  
+To run OWLET using the default calibration settings:
+  
+  ```sh
+   python owlet.py /path/to/subject/video.mp4 path/to/results/folder
+   ```
+  
+To run OWLET using a recorded calibration video for the subject:
+  
+  ```sh
+   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --video_calib /path/to/calibration/video.mp4
+   ```
+  
+If the calibration is embedded at the beginning of the subject video, use:
+  
+  ```sh
+   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --embedded_calib
+   ```
+  
+ To display the annotated video output while OWLET is running:
+  
+  ```sh
+   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --display_output
+   ```
+  
+To see descriptions of all command line options, use:
+  ```sh
+   python owlet.py --help
+   ```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -99,10 +136,6 @@ Denise Werchan - [denisewerchan.com](https://denisewerchan.com) – [@DeniseWerc
 Project Link: [https://github.com/denisemw/OWLET](https://github.com/denisemw/OWLET)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
