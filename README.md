@@ -18,15 +18,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET using a user interface can be found at: [opencv](https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>
+<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET through a user interface can be found at: [https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>
   
   
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### User Guide
+<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: [https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>  
 
-
-### Built using Python v. 3.8.8. with 
+### OWLET was built using Python v. 3.8.8. with 
 
 * [opencv]( https://pypi.org/project/opencv-python/)
 * [dlib]( http://dlib.net)
@@ -100,7 +101,7 @@ Below is an example of a Zoom video processed using OWLET.<br><br>
 <div align="center">
 <h3 >OWLET Demo:</h3>
 <a href="https://github.com/denisemw/OWLET">
-    <img src="Images/demo.gif" alt="OWLET Demo">
+    <img src="eyetracker/Images/demo.gif" alt="OWLET Demo">
   </a>
 <div align="left">
 
@@ -114,7 +115,7 @@ OWLET works best with high quality videos, and some tips are shown below. In add
 <div align="center">
 <h3 >Tips for Recording Videos:</h3>
 <a href="https://github.com/denisemw/OWLET/">
-    <img src="Images/owlet_reqs.png" alt="Best Practices" width="360" height="432">
+    <img src="eyetracker/Images/owlet_reqs.png" alt="Best Practices" width="360" height="432">
   </a>
 
 <div align="left">
