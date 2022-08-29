@@ -18,15 +18,15 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET through a user interface can be found at: [https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>
+<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET through a user interface can be found at: https://denisewerchan.com/owlet</p>
   
   
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### User Guide
-<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: [https://denisewerchan.com/owlet](https://denisewerchan.com/owlet)</p>  
-
+<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet</p>  
+  
+  
 ### OWLET was built using Python v. 3.8.8. with 
 
 * [opencv]( https://pypi.org/project/opencv-python/)
