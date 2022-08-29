@@ -24,7 +24,7 @@
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### User Guide
-<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet <br></p>  
+<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet <br><br><br></p>  
   
   
 ### OWLET was built using Python v. 3.8.8. with 
