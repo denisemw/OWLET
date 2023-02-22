@@ -21,6 +21,12 @@ def videofile(value):
             'video file must be of type *.mp4, *.mov, or *.m4v')
     return value
 
+def audiofile(value):
+    if not (value.endswith('.mp3') or value.endswith('.wav')):
+        raise argparse.ArgumentTypeError(
+            'audio file must be of type *.mp3 or *.wav')
+    return value
+
 def resultsfolder(value):
     value = Path(value)
     if not value.is_dir():
@@ -56,7 +62,7 @@ def parse_arguments():
 
     parser.add_argument('--add_task_video', type=videofile, help='integrate a video of the task with the annotated subject video')
     
-    # parser.add_argument('--match_audio', action='store_true', help='find the task onset in the subject video by matching the audio')
+    parser.add_argument('--match_audio', type=audiofile, help='find the task onset in the subject video by matching the task audio file')
 
     args = parser.parse_args()
     
@@ -108,15 +114,15 @@ if __name__ == '__main__':
     
     
                 
-    # if args.match_audio:
+    if args.match_audio:
     #     if not add_taskvideo:
     #         print("Must specify a task video using the --add_task_video argument.")
     #         raise AssertionError
         
-    #     found_match = owlet.match_audio(args.video, task_file)
-    #     if found_match == False:
-    #         print("no audio match found. Processing whole video instead")
-    #         add_taskvideo = False
+        found_match = owlet.match_audio(args.video, args.match_audio)
+        if found_match == False:
+          print("no audio match found. Processing whole video instead")
+          add_taskvideo = False
 
     if calibrate:
         owlet.calibrate_gaze(calib_file, show_output, cwd)
