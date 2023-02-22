@@ -9,7 +9,7 @@ import math
 import pandas as pd
 import numpy as np
 import cv2
-# import librosa
+import librosa
 from scipy import signal
 import subprocess
 import os
@@ -17,7 +17,7 @@ import sys
 from gaze_tracking import GazeTracking
 from calibration import LookingCalibration
 # import llvmlite
-import custom_librosa
+# import custom_librosa
 # import sklearn
 # import sklearn.neighbors._typedefs
 # import sklearn.neighbors.typedefs
@@ -141,16 +141,16 @@ class OWLET(object):
     def convert_video_to_audio_ffmpeg(self, video_file, output_ext="wav"):
         """Converts video to audio directly using `ffmpeg` command
         with the help of subprocess module"""
-        ffmpeg_path = "ffmpeg/ffmpeg"
-        if hasattr(sys, '_MEIPASS'):
-            mypath = os.path.join(sys._MEIPASS, ffmpeg_path)
-        else:
-            mypath = os.path.join(os.path.abspath(""), ffmpeg_path)
+        # ffmpeg_path = "ffmpeg/ffmpeg"
+        # if hasattr(sys, '_MEIPASS'):
+        #     mypath = os.path.join(sys._MEIPASS, ffmpeg_path)
+        # else:
+        #     mypath = os.path.join(os.path.abspath(""), ffmpeg_path)
         # print (mypath)
             
         filename, ext = os.path.splitext(video_file)
         # print(filename)
-        subprocess.run([mypath, "-i", "-y", video_file, f"{filename}.{output_ext}"], 
+        subprocess.run(["ffmpeg", "-y", "-i", video_file, f"{filename}.{output_ext}"], 
                         stdout=subprocess.DEVNULL,
                         stderr=subprocess.STDOUT)   
     
@@ -185,31 +185,31 @@ class OWLET(object):
 
         return start, end, sub_audio_length, task_audio_length
 
-    def match_audio(self, sub, task):
+    def match_audio(self, sub, taskaudio):
 
         self.convert_video_to_audio_ffmpeg(sub)
-        self.convert_video_to_audio_ffmpeg(task)
+        # self.convert_video_to_audio_ffmpeg(task)
         sub_file = sub[0:-4] + ".wav" #/Users/werchd01/Documents/GitHub/OWLET/174_12_MAAP.wav"
-        task_file = task[0:-4] + ".wav" #"/Users/werchd01/Documents/GitHub/OWLET/MAAP.wav"
-        found_match = True
+        # task_file = task[0:-4] + ".wav" #"/Users/werchd01/Documents/GitHub/OWLET/MAAP.wav"
+        self.found_match = True
         
-        start, end, length, task_length = self.find_offset(sub_file, task_file)
+        start, end, length, task_length = self.find_offset(sub_file, taskaudio)
 
         if (end-2000) > length:
             ## task video is longer than subject video
-            found_match = False
+            self.found_match = False
             self.start = 0
             self.end = 1000000000
         elif start == 0:
-            found_match = False
+            self.found_match = False
             self.start = 0
             self.end = 1000000000
         else:
-            found_match = True
+            self.found_match = True
             self.start = start
             self.end = end
         
-        return found_match
+        return self.found_match
    
     def initialize_cur_gaze_list(self):
         """Initializes lists for the current gaze positions"""
