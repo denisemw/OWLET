@@ -37,7 +37,7 @@ class LookingCalibration(object):
         self.cwd = cwd
         
 
-    def calibrate_eyes(self, file):
+    def calibrate_eyes(self, file, calib_starttime):
         cap3 = cv2.VideoCapture(file)
         hor_look = 2
         ver_look = 2
@@ -48,8 +48,10 @@ class LookingCalibration(object):
                 
         frameval = math.ceil(fps) // 30
         
-        while (cap3.isOpened() and self.timestamp < 20000):
+        while (cap3.isOpened() and self.timestamp < (calib_startime + 25000)):
             ret, frame = cap3.read()
+            start = calib_starttime - 1000
+            end = calib_starttime + 25000
             self.timestamp = cap3.get(cv2.CAP_PROP_POS_MSEC)
             if (ret != True):
                 break
