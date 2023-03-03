@@ -48,7 +48,7 @@ class LookingCalibration(object):
                 
         frameval = math.ceil(fps) // 30
         
-        while (cap3.isOpened() and self.timestamp < (calib_startime + 25000)):
+        while (cap3.isOpened() and self.timestamp < (calib_starttime + 25000)):
             ret, frame = cap3.read()
             start = calib_starttime - 1000
             end = calib_starttime + 25000
