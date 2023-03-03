@@ -173,14 +173,14 @@ class OWLET(object):
         Returns:
             The time until the task begins in the subject video
         """
-        y_within, sr_within = custom_librosa.load(subject_audio, sr=None)
-        y_find, sr_find = custom_librosa.load(task_audio, sr=sr_within)
+        y_within, sr_within = librosa.load(subject_audio, sr=None)
+        y_find, sr_find = librosa.load(task_audio, sr=sr_within)
     
         c = signal.correlate(y_within, y_find, mode='valid', method='fft')
         peak = np.argmax(c)
         start = round(peak / sr_within, 2) * 1000
-        sub_audio_length = custom_librosa.get_duration(y_within, sr_within) * 1000
-        task_audio_length = custom_librosa.get_duration(y_find, sr_find) * 1000
+        sub_audio_length = librosa.get_duration(y_within, sr_within) * 1000
+        task_audio_length = librosa.get_duration(y_find, sr_find) * 1000
         
         if c[peak] < 90:
             start = 0
