@@ -76,7 +76,7 @@ class OWLET(object):
             calib_file (str): The path of the calibration video
         """
         calib = LookingCalibration(show_output, cwd)
-        calib_audio = "/Users/werchd01/Calibration.wav" ## change path if finding the start of calibration embedded within the subject video
+        #calib_audio = "/Users/werchd01/Calibration.wav" ## change path if finding the start of calibration embedded within the subject video
         if self.found_match:
             calib_starttime, end, sub_audio_length, task_audio_length = self.find_offset(calib_file, calib_audio)
         else:
