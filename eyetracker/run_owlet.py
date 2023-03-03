@@ -77,10 +77,11 @@ class OWLET(object):
         """
         calib = LookingCalibration(show_output, cwd)
         #calib_audio = "/Users/werchd01/Calibration.wav" ## change path if finding the start of calibration embedded within the subject video
-        if self.found_match:
-            calib_starttime, end, sub_audio_length, task_audio_length = self.find_offset(calib_file, calib_audio)
-        else:
-            calib_starttime = 0
+     #   if self.found_match:
+     #       calib_starttime, end, sub_audio_length, task_audio_length = self.find_offset(calib_file, calib_audio)
+     #   else:
+     #       calib_starttime = 0
+        calib_starttime = 0
         calib.calibrate_eyes(calib_file, calib_starttime)
         self.min_xval, self.max_xval, self.range_xvals, self.middle_x = calib.get_min_max_hor()
         self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left, \
