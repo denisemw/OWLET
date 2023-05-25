@@ -13,6 +13,7 @@ import math
 class LookingCalibration(object):
 
     def __init__(self, show_output, cwd):
+        self.invert_calib_order = False
         self.frame = None
         self.eye_left = None
         self.eye_right = None
@@ -159,7 +160,10 @@ class LookingCalibration(object):
         # try:
             looks=np.array(self.hor_ratios)
             mid = len(looks)//2
-            looks=looks[0:mid]
+            if self.invert_calib_order:
+                looks = looks[mid:len(looks)]
+            else:
+                looks=looks[0:mid]
             # looks = l[(l>np.quantile(l,0.1)) & (l<np.quantile(l,0.9))].tolist()
             looks.sort()
             min_look = looks[0]
@@ -178,7 +182,10 @@ class LookingCalibration(object):
         # try:
             looks=np.array(self.hor_ratios2)
             mid = len(looks)//2
-            looks=looks[0:mid]
+            if self.invert_calib_order:
+                looks = looks[mid:len(looks)]
+            else:
+                looks=looks[0:mid]
             # looks = l[(l>np.quantile(l,0.1)) & (l<np.quantile(l,0.9))].tolist()
             looks.sort()
             min_look = looks[0]
@@ -195,7 +202,10 @@ class LookingCalibration(object):
         # try:
             looks=np.array(self.ver_ratios)
             mid = len(looks)//2
-            looks=looks[mid:len(looks)]
+            if self.invert_calib_order:
+                looks = looks[0:mid]
+            else:
+                looks=looks[mid:len(looks)]
             # looks = l[(l>np.quantile(l,0.05)) & (l<np.quantile(l,0.95))].tolist()
             looks.sort()
             toplook = looks[0]
