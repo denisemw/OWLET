@@ -13,15 +13,10 @@ import math
 class LookingCalibration(object):
 
     def __init__(self, show_output, cwd):
-        self.invert_calib_order = False
         self.frame = None
         self.eye_left = None
         self.eye_right = None
-        self.gaze = GazeTracking(2.7, 4, 1, 1, 1, cwd) # eventually replace this with means from babies
-        
-       # self.videoFile =  None #"Natalie_calib.mp4"
-       # self.cap3 =  None   # capturing the video from the given path
-     #   self.frameRate = 4 # cap3.get(5) # 4 # 60 frames per sec, so framerate = 4 is 15 steps per sec  #cap3.get(5) #frame rate
+        self.gaze = GazeTracking(2.7, 4, 1, 1, cwd) # eventually replace this with means from babies
         self.hor_ratios = []
         self.hor_ratios2 = []
         self.left_ratios = []
@@ -32,48 +27,40 @@ class LookingCalibration(object):
         self.blinks = []
         self.areas = []
         self.eye_areas = []
-        self.lengths = []
         self.timestamp = 0
         self.show_output = show_output
         self.cwd = cwd
-        
+        self.check_range_zero = 0
 
     def calibrate_eyes(self, file, calib_starttime):
         cap3 = cv2.VideoCapture(file)
         hor_look = 2
         ver_look = 2
+        print(cap3.get(5))
+
         
-        frameId = cap3.get(1) #current frame number
-        
-        fps = cap3.get(5)
-                
-        frameval = math.ceil(fps) // 30
-        
-        while (cap3.isOpened() and self.timestamp < (calib_starttime + 25000)):
+        while (cap3.isOpened() ):
             ret, frame = cap3.read()
             start = calib_starttime - 1000
-            end = calib_starttime + 25000
+            # print(frame)
+            
+
+
             self.timestamp = cap3.get(cv2.CAP_PROP_POS_MSEC)
+            
             if (ret != True):
                 break
-            if frameId % frameval == 0:
+            if self.timestamp >= start: 
+                # print(self.timestamp)
                 frame = cv2.resize(frame, (960,540))
 
-            # We send this frame to GazeTracking to analyze it
                 self.gaze.refresh(frame)
-
-                
                 frame = self.gaze.annotated_frame()
                 hor_look2 = self.gaze.horizontal_gaze_scaled()                
                 hor_look, ver_look, ver_look_left, ver_look_right = self.gaze.xy_gaze_position()
                 
                 eyearea = self.gaze.get_eye_area()
-                #leftarea, rightarea = self.gaze.get_LR_eye_area()
                 eyeratio = self.gaze.get_eye_area_ratio()
-                
-                # length = self.gaze.face_length()
-                # if length is not None:
-                    # self.lengths.append(length)
                 
                 if eyearea is not None:
                     self.areas.append(eyearea)
@@ -85,8 +72,7 @@ class LookingCalibration(object):
                 blink = self.gaze.eye_ratio()
                 if blink != 0:
                     self.blinks.append(blink)
-                # prior_hor_look = hor_look
-                # prior_ver_look = ver_look
+
                 if (hor_look is not None and not self.gaze.is_blinking()):
                     if eyeratio is not None and (eyeratio > .77 and eyeratio < 1.3):
                         self.hor_ratios.append(hor_look)
@@ -98,7 +84,6 @@ class LookingCalibration(object):
                         self.ver_ratios_left.append(ver_look_left)
                         self.ver_ratios_right.append(ver_look_right)
                     
-               # frame = cv2.flip(frame, 1)
                 if self.show_output:
                     cv2.putText(frame, "Calibrating...", (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 0), 1)
                     cv2.imshow("Calibration", frame)
@@ -108,153 +93,90 @@ class LookingCalibration(object):
         cv2.destroyAllWindows()
         for i in range (1,5):
                     cv2.waitKey(1)
-        
+                  
+        if len(self.hor_ratios) > 0:
+            min_look = min(self.hor_ratios)
+            max_look = max(self.hor_ratios)
+            self.check_range_zero = max_look - min_look
+            print("range ", self.check_range_zero)
+        else:
+            self.check_range_zero = 0
     def get_eye_area_ratio(self):
-        # try:
-            l=np.array(self.eye_areas)
-            blinks = l[(l>np.quantile(l,0)) & (l<np.quantile(l,1))].tolist()
-            blinks.sort()
-            mean = sum(blinks)/len(blinks)
-            maximum = blinks[-1]
-            minimum = blinks[0]
-            # print(mean, maximum, minimum)
+
+        try:
+            mean = np.mean(self.eye_areas) 
+            maximum = max(self.eye_areas) 
+            minimum = min(self.eye_areas) 
+            # if self.check_range_zero == 0: return (1.0, 1.35, .65)
             return (mean, maximum, minimum)
-        # except Exception:
-        #     return 2.7, 3.5, 2
+        except:
+            return (1.0, 1.35, .65)
+
 
     def get_eye_ratio(self):
-        # try:
-            l=np.array(self.blinks)
-            blinks = l[(l>np.quantile(l,0)) & (l<np.quantile(l,1))].tolist()
-            blinks.sort()
-            mid = len(blinks)//2
-            mean = blinks[mid] #sum(blinks)/len(blinks)
-            maximum = blinks[-1]
-            minimum = blinks[0]
 
-            # print(mean, maximum, minimum)
+        try:
+            self.blinks.sort()
+            mid = len(self.blinks)//2
+            mean = self.blinks[mid] #sum(blinks)/len(blinks)
+            maximum = self.blinks[-1]
+            minimum = self.blinks[0]
+            # if self.check_range_zero == 0: return (2.5, 3.5, 1.5 )
             return (mean, maximum, minimum)
-        # except Exception:
-        #     return 2.7, 3.5, 2
-    
-    def get_avg_length(self):
-        # try:
-            # l=np.array(self.lengths)
-            # final_areas = l[(l>np.quantile(l,.1)) & (l<np.quantile(l,.9))].tolist()
-            # mean = sum(final_areas)/len(final_areas)
-            mean = 100
-            return (mean)
+        except:
+            return (2.5, 3.5, 1.5 )
         
     def get_eye_area(self):
-        # try:
-            l=np.array(self.areas)
-            final_areas = l[(l>np.quantile(l,.1)) & (l<np.quantile(l,.9))].tolist()
-            mean = sum(final_areas)/len(final_areas)
-            return (mean)
-        # except Exception:
-        #     return None
+        try:
+            if self.check_range_zero == 0: return -999
+            return (np.mean(self.areas))
+        except:
+            return -999
+
         
-    # returns non sclae
     def get_min_max_hor(self):
-        #res = [i for i in self.hor_ratios if i]
-        # try:
-            looks=np.array(self.hor_ratios)
-            mid = len(looks)//2
-            if self.invert_calib_order:
-                looks = looks[mid:len(looks)]
-            else:
-                looks=looks[0:mid]
-            # looks = l[(l>np.quantile(l,0.1)) & (l<np.quantile(l,0.9))].tolist()
-            looks.sort()
-            min_look = looks[0]
-            max_look = looks[-1]
+        try:
+            min_look = min(self.hor_ratios)
+            max_look = max(self.hor_ratios)
             range_vals = max_look - min_look
             middle = (min_look + max_look)/2
-            # print ("left look" + str(min_look))
-            # print ("right look" + str(max_look))
+            # if self.check_range_zero == 0: return .5, .8, .3, .65
             return min_look, max_look, range_vals, middle
-        # except:
-        #     return .42, .58, .16, .5
-        
-        
+        except:
+            return .5, .8, .3, .65
+
     def get_min_max_hor2(self):
-        #res = [i for i in self.hor_ratios if i]
-        # try:
-            looks=np.array(self.hor_ratios2)
-            mid = len(looks)//2
-            if self.invert_calib_order:
-                looks = looks[mid:len(looks)]
-            else:
-                looks=looks[0:mid]
-            # looks = l[(l>np.quantile(l,0.1)) & (l<np.quantile(l,0.9))].tolist()
-            looks.sort()
-            min_look = looks[0]
-            max_look = looks[-1]
+        try:
+            min_look = min(self.hor_ratios2)
+            max_look = max(self.hor_ratios2)
             range_vals = max_look - min_look
             middle = (min_look + max_look)/2
-            # print ("left look" + str(min_look))
-            # print ("right look" + str(max_look))
+            # if self.check_range_zero == 0: return .4, .9, .5, .65
             return min_look, max_look, range_vals, middle
-        # except:
-        #     return .42, .58, .16, .5
+        except:
+            return .4, .9, .5, .65
+
 
     def get_min_max_ver(self):
-        # try:
-            looks=np.array(self.ver_ratios)
-            mid = len(looks)//2
-            if self.invert_calib_order:
-                looks = looks[0:mid]
-            else:
-                looks=looks[mid:len(looks)]
-            # looks = l[(l>np.quantile(l,0.05)) & (l<np.quantile(l,0.95))].tolist()
-            looks.sort()
-            toplook = looks[0]
-            downlook = looks[-1]
-            # print ("top look" + str(toplook))
-            # print ("down look" + str(downlook))
+        try:
+            toplook = min(self.ver_ratios)
+            downlook = max(self.ver_ratios)
             range_vals = downlook - toplook
-            
-            looks=np.array(self.ver_ratios_left)
-            mid = len(looks)//2
-            looks=looks[mid:len(looks)]
-            # looks = l[(l>np.quantile(l,0.05)) & (l<np.quantile(l,0.95))].tolist()
-            looks.sort()
-            toplook_left = looks[0]
-            downlook = looks[-1]
-            # print ("top look" + str(toplook))
-            # print ("down look" + str(downlook))
-            range_vals_left = downlook - toplook
-            
-            looks=np.array(self.ver_ratios_right)
-            mid = len(looks)//2
-            looks=looks[mid:len(looks)]
-            # looks = l[(l>np.quantile(l,0.05)) & (l<np.quantile(l,0.95))].tolist()
-            looks.sort()
-            toplook_right = looks[0]
-            downlook = looks[-1]
-            # print ("top look" + str(toplook))
-            # print ("down look" + str(downlook))
-            range_vals_right = downlook - toplook
             middle = (toplook + downlook)/2
+            
+            toplook_left = min(self.ver_ratios_left)
+            downlook_left = max(self.ver_ratios_left)
+            range_vals_left = downlook_left - toplook_left
+            
+            toplook_right = np.min(self.ver_ratios_right)
+            downlook_right = np.max(self.ver_ratios_right)
+            range_vals_right = downlook_right - toplook_right
+            # if self.check_range_zero == 0: return .025, .06, .035, .0425, .035, .035, .025, .025
+    
             return toplook, downlook, range_vals, middle, range_vals_left, range_vals_right, toplook_left, toplook_right
-        # except:
-        #     return .48, .52, .04, .5
+        except:
+            return .025, .06, .035, .0425, .035, .035, .025, .025
 
-    def get_min_max_left(self):
-        res = self.left_ratios
-        min_val = min(res)
-        max_val = max(res)
-        range_vals = max_val - min_val
-        middle = (max_val + min_val)/2
-        return min_val, max_val, range_vals, middle
-
-    def get_min_max_right(self):
-        res = self.right_ratios
-        min_val = min(res)
-        max_val = max(res)
-        range_vals = max_val - min_val
-        middle = (max_val + min_val)/2
-        return min_val, max_val, range_vals, middle
 
 
 
