@@ -14,27 +14,11 @@ from scipy import signal
 import subprocess
 import os
 import sys
+from io import StringIO 
+from csv import writer 
 from gaze_tracking import GazeTracking
 from calibration import LookingCalibration
-# import llvmlite
-# import custom_librosa
-# import sklearn
-# import sklearn.neighbors._typedefs
-# import sklearn.neighbors.typedefs
-# import sklearn.utils._typedefs
-# import sklearn.utils.typedefs
-# import cython
-# import sklearn.neighbors.typedefs
-# import sklearn.neighbors.quad_tree
-# import sklearn.neighbors._quad_tree
-# import sklearn.tree
-# import sklearn.tree._utils
-# import sklearn.utils._cython_blas
-# import sklearn.utils._weight_vector
-# import sklearn.utils.weight_vector
-# import sklearn.neighbors._partition_nodes
-# import sklearn.neighbors.partition_nodes
-
+from pathlib import Path
 
 class OWLET(object):
     
@@ -50,13 +34,14 @@ class OWLET(object):
         self.prior_left = (None, None)
         self.prior_right = (None, None)
         self.haslooked = False
-        self.length = 1
         self.text = ""
         self.add_stim_markers = False
         self.stim_df = None
         self.start = 0
+        self.calib_start = 0
+        self.calib_end = 30000
         self.end = 10000000
-        
+        self.found_match = False
         self.min_xval, self.max_xval, self.range_xvals, self.middle_x = .5, .8, .3, .65
         self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2 = .4, .9, .5, .65
         self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left, \
@@ -75,23 +60,74 @@ class OWLET(object):
         Arguments:
             calib_file (str): The path of the calibration video
         """
-        calib = LookingCalibration(show_output, cwd)
-        #calib_audio = "/Users/werchd01/Calibration.wav" ## change path if finding the start of calibration embedded within the subject video
-     #   if self.found_match:
-     #       calib_starttime, end, sub_audio_length, task_audio_length = self.find_offset(calib_file, calib_audio)
-     #   else:
-     #       calib_starttime = 0
-        calib_starttime = 0
-        calib.calibrate_eyes(calib_file, calib_starttime)
-        self.min_xval, self.max_xval, self.range_xvals, self.middle_x = calib.get_min_max_hor()
-        self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left, \
-            self.range_yvals_right, self.min_yval_left, self.min_yval_right = calib.get_min_max_ver()
         
-        self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2 = calib.get_min_max_hor2()
-        self.mean, self.maximum, self.minimum = calib.get_eye_ratio()
-        self.eyearea = calib.get_eye_area()
-        self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = calib.get_eye_area_ratio()     
-        self.length = calib.get_avg_length()
+        
+        sub_file , ext = os.path.splitext(calib_file)
+        subDir = os.path.dirname(calib_file)
+        csv_file = str(sub_file) + "_settings.csv"
+        
+        if Path(csv_file).is_file():
+            df = pd.read_csv(csv_file)
+            df.loc[0, "min_xval"]
+            self.calib_starttime, self.calib_endtime, self.min_xval, self.max_xval, self.range_xvals, self.middle_x = df.iloc[0, 0:6]
+            
+            self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left, \
+                self.range_yvals_right, self.min_yval_left, self.min_yval_right = df.iloc[0, 6:14]
+                
+            self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2 = df.iloc[0, 14:18]
+            
+            self.mean, self.maximum, self.minimum, self.eyearea = df.iloc[0, 18:22]
+            
+            self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = df.iloc[0, 22:25]
+        
+        else:
+            calib = LookingCalibration(show_output, cwd)
+            ### FIX THIS ###
+            # calib_audio = "/Users/werchd01/Dropbox/ORCA/Calibration.wav" 
+            # self.convert_video_to_audio_ffmpeg(sub)
+            # match_audio(self, calib_file, task):
+            
+            # if self.found_match:
+            #     calib_starttime, calib_endtime, sub_audio_length, task_audio_length = self.find_offset(calib_file, calib_audio)
+            # else:
+            calib_starttime = 0
+            calib_endtime = 30000
+            calib.calibrate_eyes(calib_file, calib_starttime)
+            
+            ## get subject name from calib_file
+            # sub_file = calib_file
+            self.calib_starttime = calib_starttime
+            self.calib_endtime = calib_endtime
+            self.min_xval, self.max_xval, self.range_xvals, self.middle_x = calib.get_min_max_hor()
+            
+            self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left, \
+                self.range_yvals_right, self.min_yval_left, self.min_yval_right = calib.get_min_max_ver()
+            
+            self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2 = calib.get_min_max_hor2()
+            
+            self.mean, self.maximum, self.minimum = calib.get_eye_ratio()
+            
+            self.eyearea = calib.get_eye_area()
+            
+            self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = calib.get_eye_area_ratio()
+            colnames = ['calib_starttime', 'calib_endtime', 'min_xval',	'max_xval',	'range_xvals',	'middle_x',	'min_yval',	'max_yval',	'range_yvals',	
+                        'middle_y',	'range_yvals_left',	'range_yvals_right',	'min_yval_left',	'min_yval_right',	
+                        'min_xval2',	'max_xval2',	'range_xvals2',	'middle_x2',	'mean',	'maximum',	
+                        'minimum',	'eyearea',	'mean_eyeratio',	'maxeyeratio',	'mineyeratio']
+            
+            data = [self.calib_starttime, self.calib_endtime, self.min_xval, self.max_xval, self.range_xvals, self.middle_x,
+                    self.min_yval, self.max_yval, self.range_yvals, self.middle_y, self.range_yvals_left,
+                    self.range_yvals_right, self.min_yval_left, self.min_yval_right,
+                    self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2,
+                    self.mean, self.maximum, self.minimum,
+                    self.eyearea, self.mean_eyeratio, self.maxeyeratio, self.mineyeratio]
+    
+            calib_settings = pd.DataFrame([ data], columns =colnames)
+            
+            
+            calib_settings.to_csv(csv_file, index = False)
+            self.calib_statistics(cwd, calib_file, subDir)
+        
 
         
     def initialize_eye_tracker(self, cwd, width, height):
@@ -100,7 +136,7 @@ class OWLET(object):
         the x/y scale values for the polynomial transfer function, and the
         initial gaze/pupil locations
         """
-        self.gaze = GazeTracking(self.mean, self.maximum, self.minimum, self.mean_eyeratio, self.length, cwd)
+        self.gaze = GazeTracking(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
             self.threshold = .1/6 
@@ -130,8 +166,7 @@ class OWLET(object):
         Returns: 
             the average x and y gaze point
         """
-        xval = x
-        yval = y 
+        xval, yval = x, y
         if len(gazelist1) > 5:
             xval = sum(gazelist1[-6:])/6
             if len(gazelist2) > 5:
@@ -147,19 +182,13 @@ class OWLET(object):
     def convert_video_to_audio_ffmpeg(self, video_file, output_ext="wav"):
         """Converts video to audio directly using `ffmpeg` command
         with the help of subprocess module"""
-        # ffmpeg_path = "ffmpeg/ffmpeg"
-        # if hasattr(sys, '_MEIPASS'):
-        #     mypath = os.path.join(sys._MEIPASS, ffmpeg_path)
-        # else:
-        #     mypath = os.path.join(os.path.abspath(""), ffmpeg_path)
-        # print (mypath)
             
         filename, ext = os.path.splitext(video_file)
-        # print(filename)
-        subprocess.run(["ffmpeg", "-y", "-i", video_file, f"{filename}.{output_ext}"], 
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.STDOUT)   
-    
+        
+        subprocess.call(["ffmpeg", "-y", "-i", video_file, f"{filename}.{output_ext}"], 
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.STDOUT)
+        
 
     def find_offset(self, subject_audio, task_audio):
         """
@@ -186,35 +215,25 @@ class OWLET(object):
         if c[peak] < 90:
             start = 0
         end = start + (task_audio_length)
-    
-    
 
         return start, end, sub_audio_length, task_audio_length
 
-    def match_audio(self, sub, taskaudio):
-
-        self.convert_video_to_audio_ffmpeg(sub)
-        # self.convert_video_to_audio_ffmpeg(task)
-        sub_file = sub[0:-4] + ".wav" #/Users/werchd01/Documents/GitHub/OWLET/174_12_MAAP.wav"
-        # task_file = task[0:-4] + ".wav" #"/Users/werchd01/Documents/GitHub/OWLET/MAAP.wav"
-        self.found_match = True
+    def match_audio(self, sub, task):
         
-        start, end, length, task_length = self.find_offset(sub_file, taskaudio)
+        self.convert_video_to_audio_ffmpeg(sub)
+        self.convert_video_to_audio_ffmpeg(task)
+        
+        subaudio = sub[0:-4] + ".wav" 
+        taskaudio = task[0:-4] + ".wav" 
+        self.found_match = False
+        
+        start, end, length, task_length = self.find_offset(subaudio, taskaudio)
 
-        if (end-2000) > length:
-            ## task video is longer than subject video
-            self.found_match = False
-            self.start = 0
-            self.end = 1000000000
-        elif start == 0:
-            self.found_match = False
-            self.start = 0
-            self.end = 1000000000
-        else:
-            self.found_match = True
+        if (end-2000) <= length and start != 0:
             self.start = start
             self.end = end
-        
+            self.found_match = True
+        os.remove(subaudio)
         return self.found_match
    
     def initialize_cur_gaze_list(self):
@@ -289,9 +308,6 @@ class OWLET(object):
         Returns:
             frame (numpy.ndarray): The subject frame with pupils annotated
         """
-        # gets the current left and right horizontal pupil positions
-        self.gaze.refresh(frame)
-        frame = self.gaze.annotated_frame()
         
         # this is getting the average gaze point of the last X number of trials, which we use to check for saccades
         self.prior_x, self.prior_y = self.get_gazepoint(self.cur_fix_hor, self.cur_fix_ver, self.prior_x, self.prior_y)
@@ -304,8 +320,7 @@ class OWLET(object):
         curx2_original = self.gaze.horizontal_gaze_scaled()
         curx2 = curx2_original
         
-        tmplist = self.cur_fix_hor_scaled.copy()
-        
+        tmplist = self.cur_fix_hor_scaled.copy()     
         
         if curx2_original is not None:
             tmplist.append(curx2_original)
@@ -349,7 +364,6 @@ class OWLET(object):
         elif curx2 < (self.min_xval2 - self.range_xvals2/1) or curx2 > (self.max_xval2 + self.range_xvals2/1):
             self.is_looking = False
             self.num_looks_away = 3
-            # print("scaled x out of screen range")
             
         # check for horizontal saccade   
         elif (cur_x >= (self.min_xval - self.range_xvals/2) and cur_x <= (self.max_xval + self.range_xvals/2) ) and \
@@ -395,7 +409,6 @@ class OWLET(object):
             self.initialize_potential_gaze_list()
         else:
             self.append_cur_gaze_list(cur_x, curx2, cur_y, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
-            # print(curx2)
             
             # uncomment if left/right gaze is desired for VPC or Listening while Looking tasks
             # if curx2_original > (self.middle_x2 + self.range_xvals2/4) or (cur_x > (self.middle_x + self.range_xvals)/4):
@@ -413,8 +426,9 @@ class OWLET(object):
         self.prior_y_left, self.prior_y_right = cur_y_left, cur_y_right
         
         return frame
+
                 
-    def update_frame(self, frame, frame2, timestamp, flip, tag_lr):
+    def update_frame(self, frame, timestamp):
         """
         Estiamtes the current point-of-gaze using a polynomial transfer function
         and the scale values determiend during calibration. Draws the estimated 
@@ -436,7 +450,6 @@ class OWLET(object):
             self.text: the tag of the frame status (looking, saccade, or away)
         """
         color = (255, 255, 0)
-        saccade = 0  
         xcoord, ycoord = None, None
         cur_y_left, cur_y_right = self.get_gazepoint(self.cur_fix_ver_left, self.cur_fix_ver_right, self.prior_y_left, self.prior_y_right)
         cur_x, cur_y = self.get_gazepoint(self.cur_fix_hor, self.cur_fix_ver, self.prior_x, self.prior_y)
@@ -453,25 +466,14 @@ class OWLET(object):
             if xcoord < 0 or xcoord > 960:
                 self.text = "away"
             if self.text == "saccade":
-                saccade = 1
                 left_coords, r_left = self.gaze.pupil_left_coords()
                 right_coords, r_right = self.gaze.pupil_right_coords()
                 
-                # changes color of eyes
-                cv2.circle(self.frame, left_coords, 3, (0, 0, 255), 1)
-                cv2.circle(self.frame, right_coords, 3, (0, 0, 255), 1) 
-            if tag_lr and xcoord < 480 and xcoord >= 0: 
-                if flip:
-                    self.text = "right"
-                else:
-                    self.text="left"
-            elif tag_lr and xcoord > 480 and xcoord <= 960:
-                if flip:
-                    self.text = "left"
-                else:
-                    self.text="right"
+            # if xcoord < 480 and xcoord >= 0: self.text="left"          
+            # elif xcoord > 480 and xcoord <= 960: self.text="right"
 
-            cv2.circle(frame2, (xcoord, ycoord), 15, color, 2)  
+            if frame.shape[1] == 1920:
+                cv2.circle(frame, (xcoord+960, ycoord), 15, color, 2)  
         else:
             # if gaze is lost for 100ms or more, reset current and potential lists
             if self.num_looks_away > 2:
@@ -485,151 +487,196 @@ class OWLET(object):
         
         cv2.putText(frame, self.text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
         cv2.putText(frame, str(round(timestamp,0)), (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
-        return frame, frame2, cur_x, cur_y, xcoord, ycoord, saccade, self.text
+        return frame, xcoord, ycoord, self.text
 
 
     def read_stim_markers(self, stim_file):
-        self.stim_df = pd.read_csv(stim_file)
-        if "Time" not in self.stim_df:
-            if "time" in self.stim_df:
-                self.stim_df.rename(columns = {'time':'Time'}, inplace = True)
+        stim_df = pd.read_csv(stim_file)
+        if "Time" not in stim_df:
+            if "time" in stim_df:
+                stim_df.rename(columns = {'time':'Time'}, inplace = True)
             else:
-                return False
-        if "Label" not in self.stim_df:
-            if "label" in self.stim_df:
-                self.stim_df.rename(columns = {'label':'Label'}, inplace = True)
+                return False, None
+        if "Label" not in stim_df:
+            if "label" in stim_df:
+                stim_df.rename(columns = {'label':'Label'}, inplace = True)
             else:
-                return False
-        self.add_stim_markers = True
-        self.stim_df.sort_values("Time")
-        return True
-
-    def process_subject(self, cwd, videofile, calib_file, csv_dir, out_dir, calibrate, show_output, flip, tag_lr, add_taskvideo, task_file):
+                return False, None
+        stim_df.sort_values("Time")
+        return True, stim_df
     
-        sub = videofile.rsplit('/', 1)[-1]
-    #    sub_count = 0
-        sub_list = [videofile]
-      #  for file in os.listdir("gaze_tracking/example_task/"):
-      #      if file.endswith(".mp4") or file.endswith(".mov"):
-      #          sub_list.append(file)
-      #          print(os.path.join("gaze_tracking/example_task/", file))
-      #  cwd = os.path.abspath(os.path.dirname(__file__))
-      
-        for video in sub_list:
-            # try:  
-                sub = video.rsplit('/', 1)[-1]
-                sub = sub[0:-4]
-                ret2 = True
-                outfile = out_dir + '/' 
-                outfile = outfile + sub + "_annotated.mp4"
-                
-                cap = cv2.VideoCapture(videofile)   # capturing the baby video from the given path
-                if add_taskvideo:
-                    cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path
-                fps = cap.get(5)
-                if fps > 30: fps2 = 30
-                else: fps2  = fps
-                
-                frameId = cap.get(1) #current frame number
-                
-                frameval = math.ceil(fps) // 30
-                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                
-                if add_taskvideo:
-                    out = cv2.VideoWriter(outfile, fourcc, fps2, (1920, 540))
-                else: 
-                    out = cv2.VideoWriter(outfile, fourcc, fps2, (960, 540))
-                
-                if self.add_stim_markers == True:
-                    df = pd.DataFrame(columns = ['Subject_ID', 'Time', 'Frame', 'X-coord', 'Y-coord', 'Saccade', 'Tag', "Label"])
-                else:
-                    df = pd.DataFrame(columns = ['Subject_ID', 'Time', 'Frame', 'X-coord', 'Y-coord', 'Saccade', 'Tag'])
-    
-                count=0
+    def calib_statistics(self, cwd, calib_file, subDir):
+        df = self.process_subject(cwd, calib_file, subDir, False, None, True)
 
-                self.initialize_eye_tracker(cwd, 960, 540)
         
-                while (cap.isOpened()):
-                    frameId = cap.get(1) #current frame number
-                    ret, frame = cap.read()
+        Xcoords, pixelsX = [480, 960, 0, 480, 480], [480, 960, 0, 480, 480]           
+        Ycoords , pixelsY= [270, 270, 270, 540, 0], [270, 270, 270, 540, 0]
+        
+        minDistX, minDistY = [999, 999, 999, 999, 999], [999, 999, 999, 999, 999]
+
+        
+        xCoordList = df.loc[:, 'X-coord']
+        yCoordList = df.loc[:, 'Y-coord']
+        
+        xCoordList = list(filter(lambda item: item is not None and not math.isnan(item), xCoordList))
+        yCoordList = list(filter(lambda item: item is not None and not math.isnan(item), yCoordList))
+
+        for i in range(5):
+            diffX = min(xCoordList, key=lambda x:abs(x-Xcoords[i]))
+            diffY = min(yCoordList, key=lambda y:abs(y-Ycoords[i]))
+            minDistX[i] = diffX-Xcoords[i]
+            pixelsX[i] = diffX
+            minDistY[i] = diffY-Ycoords[i]
+            pixelsY[i] = diffY
+
+        Xdeviation  = int(np.mean(pixelsX))  
+        Ydeviation = int(np.mean(pixelsY))
+        overallDeviation = int((Xdeviation + Ydeviation) / 2)
+        sub_file , ext = os.path.splitext(calib_file)
+        
+        sub = os.path.basename(sub_file)[:-4]
+        data = [sub, overallDeviation, Xdeviation, Ydeviation]
+        cols =  ['Subject_ID', 'Deviation.average',
+                   'Deviation.X', 'Deviation.Y' ]
+        stats = pd.DataFrame([ data], columns =cols)
+        
+        csv_file = str(sub_file) + "_accuracy.csv"
+        stats.to_csv(csv_file, index = False)
+        
+        # img_file = str(subDir) + "/" + str(sub) + ".jpg"
+        # img = cv2.imread(os.path.abspath(os.path.join(cwd, "calibration.jpg")))
+        
+        # points = [ (480, 270),(860, 270), (100, 270), (480, 465), (480, 75) ]
+        # for point in points:
+        #     cv2.circle(img, point, int(overallDeviation), (0, 0, 255), 1)
+        # cv2.imwrite(img_file, img)        
+        
+
+    def process_subject(self, cwd, videofile, subDir, show_output, task_file, calib):
+    
+
+        sub_file, ext = os.path.splitext(videofile)
+        sub = os.path.basename(sub_file)
+        ret2 = True
+        taskname = ""
+        if task_file is not None:
+            taskname = "_" + str(os.path.basename(task_file)[0:-4])
+        outfile = str(sub_file) + taskname + "_annotated.mp4"                
+        cap = cv2.VideoCapture(videofile)   # capturing the baby video from the given path
+        fps = cap.get(5)
+
+        if fps > 30: fps2 = 30
+        else: fps2  = fps
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        if task_file is not None:
+            cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path
+            out = cv2.VideoWriter(outfile, fourcc, fps2, (1920, 540))
+        else: 
+            out = cv2.VideoWriter(outfile, fourcc, fps2, (960, 540))
+        
+        frameval = math.ceil(fps) // 30 # downsamples videos to 30 fps
+        if frameval < 1: frameval = 1
+        
+        output = StringIO()
+        csv_writer = writer(output)
+        
+        colnames = ['Subject_ID', 'Time', 'Frame', 'X-coord', 'Y-coord', 'Tag', 'Trial']
+        csv_writer.writerow(colnames)
+
+        self.initialize_eye_tracker(cwd, 960, 540)
+        if calib:
+            self.start = self.calib_starttime
+            self.end = self.calib_endtime
+        
+        ret, frame = cap.read()
+        height, width, _ = frame.shape
+        resize = (height != 540 or width!=960)
+
+        # show_output=True
+        while (cap.isOpened()):
+            ret, frame = cap.read()
+            frameId = cap.get(1) #current frame number
+            if (ret == False or ret2 == False):
+                
+                break
+            if (frameId % frameval == 0):
+                
+                time = cap.get(cv2.CAP_PROP_POS_MSEC)
+                
+                if time >= self.start and time <= self.end:
+                    if resize: frame = cv2.resize(frame, (960,540))                        
                     
-                    if (ret == False or ret2 == False):
-                        break
-                    if (frameId % frameval == 0):
-                        timestamp = cap.get(cv2.CAP_PROP_POS_MSEC)
+                    
+                    draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
+                    frame = self.determine_gaze(frame)
+                    
+                    if draw_pupils: 
+                        cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
+                        cv2.circle(frame, right_coords, 3, (255, 255, 0), 1)  
+                    
+                    # concat frames
+                    if task_file is not None:
+                        ret2, frame2 = cap2.read()   
+                        if ret2==False: break
+                        frame2 = cv2.resize(frame2, (960,540))
+                        final = cv2.hconcat([frame, frame2])
+                    else: final = frame
                         
-                        if timestamp >= self.start and timestamp <= self.end:
-                            frame = cv2.resize(frame, (960,540))                        
-                            
-                            
-                            if add_taskvideo:
-                                ret2, frame2 = cap2.read()               
-                            else:
-                                frame2 = frame
-                            if ret2==False:
-                                break
-                            
-                            
-                            frame2 = cv2.resize(frame2, (960,540))
-                            
-                            
-                            frame = self.determine_gaze(frame)
-                            frame, frame2, cur_x, cur_y, xcoord, ycoord, saccade, text = \
-                                self.update_frame(frame, frame2, timestamp, flip, tag_lr)
-        
-                            # if flip:
-                            #     frame = cv2.flip(frame, 1)
-                            if add_taskvideo:
-                                final = cv2.hconcat([frame, frame2])
-                            else:
-                                final = frame
-                            if show_output:
-                                cv2.imshow(sub, final)
-                            out.write(final)
-                            if self.add_stim_markers:
-                                df.loc[count] = [sub, timestamp, frameId, xcoord, ycoord, saccade, text, ""]
-                            else:
-                                df.loc[count] = [sub, timestamp, frameId, xcoord, ycoord, saccade, text]
-                            count+=1
-                            key = cv2.waitKey(1)
-                            # press 'q' to quit
-                            if key == ord('q'):
-                                break
-                            # press 'p' to pause/unpause
-                           
-                            # if cv2.waitKey(1) == 27:
-                            #     break
-                            # if cv2.waitKey(1) & 0xFF == ord('q'):
-                            #     break
+                    final, xcoord, ycoord, text = self.update_frame(final, time)
+
+                    if show_output:
+                        cv2.imshow(sub, final)
+                    out.write(final)
+
+                    csv_writer.writerow([sub, time, frameId, xcoord, ycoord, text, ""])
+                    
+                    key = cv2.waitKey(1)
+                    # press 'q' to quit
+                    if key == ord('q'):
+                        break                           
+                    
+        cap.release()    
+        out.release()
+        # print("Done: " + sub)
+        cv2.destroyAllWindows()
+                
+        output.seek(0) 
+        df = pd.read_csv(output)
+        return df
             
-                cap.release()    
-                out.release()
-                print("Done: " + sub)
+    def format_output(self, videofile, task_file, subDir, expDir, df, aoi_file, stim_df):
+        sub, ext = os.path.splitext(videofile)
+        taskname = ""
+        if task_file is not None:
+            taskname = "_" + str(os.path.basename(task_file)[0:-4])
+            
+        if aoi_file != "":
+            aois =  pd.read_csv(os.path.abspath(os.path.join(expDir, aoi_file)))
+            for i in range(len(df)): 
+                for j in range(len(aois)):
+                    if df.loc[i, "X-coord"] in range(aois.loc[j, 'X1'],aois.loc[j, 'X2']) \
+                        and df.loc[i, "Y-coord"] in range(aois.loc[j, 'Y1'],aois.loc[j, 'Y2']):
+                        df.loc[i, "Tag"] = aois.loc[j, 'AOI']
+                        break
+   
+        else:
+            for i in range(len(df)):
+                if df.loc[i, "X-coord"] in range(0,480):
+                    df.loc[i, "Tag"] = "Left"
+                elif df.loc[i, "X-coord"] in range(480,960):
+                    df.loc[i, "Tag"] = "Right"
+        
+        if stim_df is not None:
+            row_marker = 0
 
-                cv2.destroyAllWindows()
-                for i in range (1,5):
-                    cv2.waitKey(1)
-                
-                if self.add_stim_markers:
-                    row_marker = 0
-
-                    for i in range(len(df)):
-                        if row_marker >= len(self.stim_df):
-                            break
-                        cur_time = self.stim_df.loc[row_marker, "Time"] + self.start
-                        cur_label = self.stim_df.loc[row_marker, "Label"]
-                        if df.loc[i, "Time"] >= cur_time and i==0:
-                            df.loc[i, "Label"] = cur_label
-                            row_marker += 1
-                        elif df.loc[i, "Time"] >= cur_time:
-                            df.loc[i-1, "Label"] = cur_label
-                            row_marker += 1                            
-                        
-                    
-                csv_file = csv_dir + "/"
-                csv_file = csv_file + sub + ".csv"
-                
-                df.to_csv(csv_file, index = False)
-            # except Exception as e:
-            #     print(e)
-            #     continue
+            for i in range(len(df)):
+                if row_marker >= len(stim_df):
+                    break
+                cur_time = stim_df.loc[row_marker, "Time"] + self.start
+                cur_label = stim_df.loc[row_marker, "Label"]
+                if df.loc[i, "Time"] >= cur_time:
+                    df.loc[i, "Trial"] = cur_label
+                    row_marker += 1                        
+        csv_file =str(sub) + taskname + ".csv"
+        df.to_csv(csv_file, index = False)
