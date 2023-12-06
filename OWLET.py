@@ -7,13 +7,13 @@ Created on Mon Aug 29 14:34:16 2022
 """
 
 import sys
-sys.path.append("eyetracker")
+sys.path.append("/Users/werchd01/OWLET/eyetracker")
 
 import argparse
 from run_owlet import OWLET
 import os
 from pathlib import Path
-
+import glob
 
 def videofile(value):
     if not (value.endswith('.mp4') or value.endswith('.mov') or value.endswith('.m4v')):
@@ -21,115 +21,105 @@ def videofile(value):
             'video file must be of type *.mp4, *.mov, or *.m4v')
     return value
 
-def audiofile(value):
-    if not (value.endswith('.mp3') or value.endswith('.wav')):
-        raise argparse.ArgumentTypeError(
-            'audio file must be of type *.mp3 or *.wav')
-    return value
-
-def resultsfolder(value):
+def expFolder(value):
     value = Path(value)
     if not value.is_dir():
         raise argparse.ArgumentTypeError(
-            'results filepath must point to a folder')
+            'Filepath must point to a folder with experiment info')
     return value
-
-def csvfile(value):
-    if not value.endswith('.csv'):
-        raise argparse.ArgumentTypeError(
-            'add_trial_markers argument must be of type *.csv')
-    return value
-
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='OWLET - Online Webcam Linked Eye Tracker')
-    
-    parser.add_argument('video', type=videofile, help='the subject video to process (path to video file.')
-    
-    parser.add_argument('results', type=resultsfolder, help='folder where results should be saved')
-
+    parser.add_argument('subject_video', type=videofile, help='subject video to be processed')
+    parser.add_argument('--experiment_info', type=expFolder, help='directory with optional experiment info')
     parser.add_argument('--display_output', action='store_true', help='show annotated video online in a separate window')
-
-    parser.add_argument('--add_trial_markers', type=str, help='csv file with "Time" and "Label" columns for stimulus/trial markers')
-    
-    parser.add_argument('--LR_tags', action='store_true', help="add tags for when baby is looking left or right (from the baby's perspective')")
-    
-    parser.add_argument('--LR_tags_flipped', action='store_true', help="add tags for when baby is looking left or right (from the screen's perspective)")
-
-    parser.add_argument('--video_calib', type=videofile, help='select a video file to use for calibration.')
-    
-    parser.add_argument('--embedded_calib', action='store_true', help='use the subject video to calibrate OWLET.')
-
-    parser.add_argument('--add_task_video', type=videofile, help='integrate a video of the task with the annotated subject video')
-    
-    parser.add_argument('--match_audio', type=audiofile, help='find the task onset in the subject video by matching the task audio file')
-
+    parser.add_argument('--override_audio_matching', action='store_true', help='Manually override audio matching when processing pre-cropped task videos')
     args = parser.parse_args()
-    
     return args
 
-    
-
-
 if __name__ == '__main__':
+    
     cwd = os.path.abspath(os.path.dirname(__file__))
     args = parse_arguments()
     owlet = OWLET()
-    show_output = False            
+    show_output = False
+    stim_df = None
+    # contains subject video (and calibration video if desired)
+    subVideo = args.subject_video
+    subDir = os.path.dirname(subVideo) #args.subject_folder
+    
+    taskVideo, calibVideo, aois, stim_file, expDir = None, None, "", None, None
+    
+    # contains optional experiment info (task video, aois, and stimulus/trial timing info)
+    if args.experiment_info:
+        expDir = args.experiment_info
+        os.chdir(expDir)
+        taskVideo = glob.glob('*.mp4') + glob.glob('*.mov')
+        aois = glob.glob('*AOIs.csv')
+        stim_file = glob.glob('*trials*csv')
+        if len(taskVideo) == 0: taskVideo = None
+        if len(aois) == 0: 
+            aois = ""
+        else: 
+            aois = aois[0]
+        if len(stim_file) == 0: stim_file = None
+    
+
+    os.chdir(subDir)
+    subname , ext = os.path.splitext(subVideo)
+    subname = os.path.basename(subname)
+    # subname = str(subname)
+    subname = subname.replace('_tasks', '')
+    print(subname, subDir)
+
+    calibVideo = glob.glob('*calibration*.mp4') + glob.glob('*Calibration*.mp4') + glob.glob('*calibration*.mov') + glob.glob('*Calibration*.mov')
+    calibVideo = [ x for x in calibVideo if "annotated" not in x ]
+    calibVideo = [ x for x in calibVideo if str(subname) in x ]
+    print(calibVideo)
+
     if args.display_output:
         show_output = True
+        
+        
   
-    if args.add_trial_markers:
-        success = owlet.read_stim_markers(args.add_trial_markers)
+    if taskVideo is not None:
+        experiment_name = os.path.basename(os.path.normpath(expDir))
+        file_name = str(subDir) + '/' + str(subname) + "_" + str(experiment_name) + "_error_log" + ".txt"
+        print(file_name)
+    else:
+        file_name =  str(subDir) + '/' + str(subname) + "_error_log" + ".txt"
+        print(file_name)
+    
+    
+    if stim_file is not None and len(stim_file) == 1:
+        success, stim_df = owlet.read_stim_markers(os.path.join(expDir, stim_file[0]))
+        
         if not success:
-            print("Must specify a csv file with 'Time' and 'Label' columns.")
+            print("Trial markers file must have 'Time' and 'Label' columns.")
+            file = open(file_name, "w")
+            file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
+            file.close()
             raise AssertionError
-        
-    flip = False
-    tag_lr = False
     
-    if args.LR_tags:
-        tag_lr = True
-        
-    if args.LR_tags_flipped:
-        tag_lr = True
-        flip = True
-        
-    calibrate = False
-    calib_file = ""
+    if calibVideo is not None and len(calibVideo) == 1:
+        calibVideo = os.path.abspath(os.path.join(subDir, calibVideo[0]))
+        print(calibVideo)
+        owlet.calibrate_gaze(calibVideo, show_output, cwd)
     
-    if args.video_calib:
-        calibrate = True
-        calib_file = args.video_calib
         
-    if args.embedded_calib:
-        calibrate = True
-        calib_file = args.video
-        
-    task_file = ""
-    add_taskvideo = False
-    if args.add_task_video:
-        task_file = args.add_task_video
-        add_taskvideo = True
     
-    
-                
-    if args.match_audio:
-    #     if not add_taskvideo:
-    #         print("Must specify a task video using the --add_task_video argument.")
-    #         raise AssertionError
-        
-        found_match = owlet.match_audio(args.video, args.match_audio)
-        if found_match == False:
-          print("no audio match found. Processing whole video instead")
-          add_taskvideo = False
+    if taskVideo is not None and len(taskVideo) == 1:
+        taskVideo = os.path.abspath(os.path.join(expDir, taskVideo[0]))
+        if not args.override_audio_matching:
+            found_match = owlet.match_audio(subVideo, taskVideo)
+            if found_match == False:
+                print("The task video was not found within the subject video. Processing halted.")
+                file = open(file_name, "w")
+                file.write("The task video was not found within the subject video. Processing halted..\n")
+                file.close()
+                exit()
 
-    if calibrate:
-        owlet.calibrate_gaze(calib_file, show_output, cwd)
-        
-    results_folder = Path(args.results)
-        
-    owlet.process_subject(cwd, args.video, calib_file, str(args.results), \
-                                          str(args.results), calibrate, show_output, \
-                                              flip, tag_lr, add_taskvideo, task_file)
-        
+    
+    df = owlet.process_subject(cwd, subVideo, subDir, show_output, taskVideo, False)
+    owlet.format_output(subVideo, taskVideo, subDir, expDir, df, aois, stim_df)
+    
