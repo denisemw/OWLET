@@ -100,14 +100,14 @@ A csv file with x/y areas of interest (AOIs)
   <!-- RUNNING OWLET -->
 ## Running OWLET using Terminal commands
 
-### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
+#### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
 
-### To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
+#### To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
 ```sh
    python owlet.py /path/to/subject/video.mp4
    ```
   
-### To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
+#### To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
   
   ```sh
    python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder
