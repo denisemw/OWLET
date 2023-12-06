@@ -43,54 +43,82 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
+Install miniconda following the directions [here](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html)
+
 To get a local copy of this software up and running, first clone this repository:
 
    ```sh
    git clone https://github.com/denisemw/OWLET.git
    ```
-Second, navigate to the OWLET directory and create a virtual environment. Install Anaconda if needed, then create an environment using the owlet_environment.yml file in this repository:
+Second, navigate to the OWLET directory and create a virtual environment and install the required dependenices by either:
+(1) Using conda and the owlet_environment.yml file in the repository (recommended):
   
    ```sh
    conda env create -n owlet_env -f owlet_environment.yml
-   ```
-Then, activate the environment:
-  
-   ```sh
    conda activate owlet_env
    ```
+(2) Installing the required dependencies manually using pip install (if the above option fails):
+ ```sh
+   pip install opencv-python
+   pip install dlib
+   pip install numpy
+   pip install pandas
+   pip install librosa
+   pip install scipy
+   ```
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- SETTING UP YOUR EXPERIMENT FOR OWLET -->
+## 1. CREATE A DIRECTORY FOR THE SUBJECT VIDEOS
+
+Create a directory that contains your subject video(s) and the optional corresponding calibration video(s).
+
+If calibration files are inlcuded in the directory:
+* Ensure that they have the same name as the subject videos with ‘_calibration’ added at the end
+
+If calibration files are not included in the same directory:
+* If calibration file(s) are not included, OWLET will process the videos using default settings.
+
+## 2. CREATE A DIRECTORY FOR THE EXPERIMENT INFO (optional)
+
+To automatically link the frame-by-frame eye tracking data with a task, create a folder(s) that specifies optional information for each task(s):
+
+A video of the task in .mov or .mp4 format (maximum frame rate of 30 fps)
+* If this is included, OWLET will save a video of the subject's point-of-gaze overlayed on the task video in addition to the frame-by-frame csv output
+
+A csv file with trial timings
+* If this is included, OWLET will tag the start of each trial in the frame-by-frame csv output 
+
+A csv file with x/y areas of interest (AOIs)
+* If this is included, OWLET will tag which AOI that the baby’s point-of-gaze was in for each video frame in the csv output; if custom AOIs are not included, the csv output will only tag whether the baby is looking at the left, right, or away from the screen for each video frame
+
+
 <p align="right">(<a href="#top">back to top</a>)</p>
   
   <!-- RUNNING OWLET -->
-## Running OWLET
-  
-To run OWLET using the default calibration settings:
-  
-  ```sh
-   python owlet.py /path/to/subject/video.mp4 path/to/results/folder
+## Running OWLET using Terminal commands
+
+Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
+
+To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
+```sh
+   python owlet.py /path/to/subject/video.mp4
    ```
   
-To run OWLET using a recorded calibration video for the subject:
+To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
   
   ```sh
-   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --video_calib /path/to/calibration/video.mp4
+   python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder
    ```
-  
-If the calibration is embedded at the beginning of the subject video, use:
-  
-  ```sh
-   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --embedded_calib
-   ```
-  
- To display the annotated video output while OWLET is running:
-  
-  ```sh
-   python owlet.py /path/to/subject/video.mp4 path/to/results/folder --display_output
-   ```
-  
-To see descriptions of all command line options, use:
-  ```sh
-   python owlet.py --help
-   ```
+
+## Additional tips
+
+When task information is included using the '--experiment_info' option, OWLET will automatically find where the task began in the recorded video of the child by matching the audio patterns in the subject and task videos. This is helpful for automating processing, as it removes the need to manually trim the recordings. However, this can fail occasionally when an audio match is not found (e.g., if the subject video or task video does not contain sound). If you have issues with audio matching but still wish to automatically link the subject recordings with task information, follow these steps:
+
+1. Manually trim the subject recording so that only the task of interest is in the video.
+2. Run OWLET using the '--override_audio_matching' option:
+   * python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder --override_audio_matching
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
