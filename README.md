@@ -76,11 +76,9 @@
 
 Create a directory that contains your subject video(s) and the optional corresponding calibration video(s).
 
-If calibration files are inlcuded in the directory:
-* Ensure that they have the same name as the subject videos with ‘_calibration’ added at the end
+* If calibration files are inlcuded in the directory, they should have the same name as the subject videos with ‘_calibration’ added at the end
 
-If calibration files are not included in the same directory:
-* If calibration file(s) are not included, OWLET will process the videos using default settings.
+* If calibration files are not included in the same directory, OWLET will process the videos using default settings.
   
 
 ### 2. (optional) Create a directory with the task information
