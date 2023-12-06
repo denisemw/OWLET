@@ -43,21 +43,22 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Install miniconda following the directions [here](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html)
+#### 1. Install miniconda following the directions [here](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html)
 
-To get a local copy of this software up and running, first clone this repository:
+#### 2. Install OWLET by cloning the GitHub repository using the following Terminal command:
 
    ```sh
    git clone https://github.com/denisemw/OWLET.git
    ```
-Second, navigate to the OWLET directory and create a virtual environment and install the required dependenices by either:
-(1) Using conda and the owlet_environment.yml file in the repository (recommended):
+#### 3. Navigate to the OWLET directory and install the required dependenices by either:
+
+* Using conda and creating a virtual environment using the owlet_environment.yml file in the repository (recommended):
   
    ```sh
    conda env create -n owlet_env -f owlet_environment.yml
    conda activate owlet_env
    ```
-(2) Installing the required dependencies manually using pip install (if the above option fails):
+* Installing the required dependencies manually using pip install (if the above option fails):
  ```sh
    pip install opencv-python
    pip install dlib
@@ -69,7 +70,9 @@ Second, navigate to the OWLET directory and create a virtual environment and ins
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- SETTING UP YOUR EXPERIMENT FOR OWLET -->
-## 1. CREATE A DIRECTORY FOR THE SUBJECT VIDEOS
+## Setting up your experiment for OWLET
+
+#### 1. Create a directory with the subject videos
 
 Create a directory that contains your subject video(s) and the optional corresponding calibration video(s).
 
@@ -79,9 +82,9 @@ If calibration files are inlcuded in the directory:
 If calibration files are not included in the same directory:
 * If calibration file(s) are not included, OWLET will process the videos using default settings.
 
-## 2. CREATE A DIRECTORY FOR THE EXPERIMENT INFO (optional)
+#### 2. (optional) Create a directory with the task information
 
-To automatically link the frame-by-frame eye tracking data with a task, create a folder(s) that specifies optional information for each task(s):
+This step is optional, but will allow you to automatically link the frame-by-frame eye tracking data with information about the task. To do this, create a folder(s) that specifies optional information for each task(s):
 
 A video of the task in .mov or .mp4 format (maximum frame rate of 30 fps)
 * If this is included, OWLET will save a video of the subject's point-of-gaze overlayed on the task video in addition to the frame-by-frame csv output
@@ -98,20 +101,20 @@ A csv file with x/y areas of interest (AOIs)
   <!-- RUNNING OWLET -->
 ## Running OWLET using Terminal commands
 
-Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
+#### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
 
-To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
+#### To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
 ```sh
    python owlet.py /path/to/subject/video.mp4
    ```
   
-To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
+#### To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
   
   ```sh
    python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder
    ```
 
-## Additional tips
+#### Additional tips
 
 When task information is included using the '--experiment_info' option, OWLET will automatically find where the task began in the recorded video of the child by matching the audio patterns in the subject and task videos. This is helpful for automating processing, as it removes the need to manually trim the recordings. However, this can fail occasionally when an audio match is not found (e.g., if the subject video or task video does not contain sound). If you have issues with audio matching but still wish to automatically link the subject recordings with task information, follow these steps:
 
