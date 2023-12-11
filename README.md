@@ -25,6 +25,7 @@
 
 ### User Guide
 <p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet <br><br><br></p>  
+
   
   
 ### OWLET was built using Python v. 3.8.8. with 
@@ -38,35 +39,36 @@
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+## How it works
 
+For a given, pre-recorded webcam/smartphone video, OWLET will:
+* Calibrate the subject's gaze using default settings (determined using generalized estimates from prior data, see Werchan et al., 2023) or by using a custom calibration video of the subject looking to the left, right, top, and bottom of the smartphone/computer screen (if available)
+* Determine the subject's point-of-gaze (x/y coordinate estimates of where they were fixating on teh screen) for each frame of the video
+* Save a CSV file with the frame-by-frame x/y point-of-gaze coordinates and the screen region that the subject's point-of-gaze fell within (left, right, or away from the screen)
+
+OWLET also provides the following additional options:
+* Automatically determine the time that the task begins in the subject's pre-recorded video by matching the auditory pattern of the subject's video with the auditory pattern of the video shown to the subject
+* Integrate the frame-by-frame CSV output with information on the trial timings
+* Ability to specify custom areas of interest (AOIs) when tagging the region of subject's point of gaze in the CSV output
+* Combine the subject's pre-recorded video with a video of the subject's point-of-gaze overlayed on the task video 
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
 ### 1. Install miniconda following the directions [here](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html)
 
-### 2. Install OWLET by cloning the GitHub repository using the following Terminal command:
+### 2. Install OWLET by cloning the GitHub repository:
 
    ```sh
    git clone https://github.com/denisemw/OWLET.git
    ```
-### 3. Navigate to the OWLET directory and install the required dependenices by either:
-
-* Using conda and creating a virtual environment using the owlet_environment.yml file in the repository (recommended):
+### 3. Navigate to the OWLET directory and install required dependenices:
   
    ```sh
    conda env create -n owlet_env -f owlet_environment.yml
    conda activate owlet_env
    ```
-* Installing the required dependencies manually using pip install (if the above option fails):
- ```sh
-   pip install opencv-python
-   pip install dlib
-   pip install numpy
-   pip install pandas
-   pip install librosa
-   pip install scipy
-   ```
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- SETTING UP YOUR EXPERIMENT FOR OWLET -->
@@ -86,13 +88,13 @@ Create a directory that contains your subject video(s) and the optional correspo
 This step is optional, but will allow you to automatically link the frame-by-frame eye tracking data with information about the task. To do this, create a folder(s) that specifies optional information for each task(s):
 
 A video of the task in .mov or .mp4 format (maximum frame rate of 30 fps)
-* If this is included, OWLET will save a video of the subject's point-of-gaze overlayed on the task video in addition to the frame-by-frame csv output
+* This will save a video of the subject's point-of-gaze overlayed on the task video.
 
 A csv file with trial timings
-* If this is included, OWLET will tag the start of each trial in the frame-by-frame csv output 
+* This will tag the start of each trial in the frame-by-frame csv output 
 
 A csv file with x/y areas of interest (AOIs)
-* If this is included, OWLET will tag which AOI that the baby’s point-of-gaze was in for each video frame in the csv output; if custom AOIs are not included, the csv output will only tag whether the baby is looking at the left, right, or away from the screen for each video frame
+* This will tag which custom AOI that the child's’s point-of-gaze was in for each video frame in the csv output; 
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -100,7 +102,11 @@ A csv file with x/y areas of interest (AOIs)
   <!-- RUNNING OWLET -->
 ## Running OWLET using Terminal commands
 
-#### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used).
+#### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used):
+```sh
+   cd /path/to/OWLET
+   conda activate owlet_env
+   ```
 
 #### To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
 ```sh
