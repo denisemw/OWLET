@@ -65,6 +65,7 @@ OWLET also provides the following additional options:
 ### 3. Navigate to the OWLET directory and install required dependenices:
   
    ```sh
+   cd /path/to/OWLET
    conda env create -n owlet_env -f owlet_environment.yml
    conda activate owlet_env
    ```
