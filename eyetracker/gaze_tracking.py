@@ -13,7 +13,7 @@ class GazeTracking(object):
     and pupils and allows to know if the eyes are open or closed
     """
 
-    def __init__(self, mean, maximum, minimum, ratio, length, cwd):
+    def __init__(self, mean, maximum, minimum, ratio, cwd):
         self.frame = None
         self.eye_left = None
         self.eye_right = None
@@ -27,14 +27,12 @@ class GazeTracking(object):
         self.leftpoint = None
         self.rightpoint = None
         self.leftright_eyeratio = ratio
-        self.length = length
-
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
         self._predictor = dlib.shape_predictor(model_path)
-        eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
-        self.eye_classifier = cv2.CascadeClassifier(eyepath)
+        # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
+        # self.eye_classifier = cv2.CascadeClassifier(eyepath)
 
     @property
     def pupils_located(self):
@@ -103,7 +101,9 @@ class GazeTracking(object):
         """
         self.frame = frame
         self._analyze()
-        
+        draw_pupils, left_coords, right_coords = self.annotated_frame()
+        return draw_pupils, left_coords, right_coords 
+    
     def pupil_left_coords(self):
         """Returns the xy coordinates and radius of the left pupil"""
         if self.pupils_located:
@@ -242,14 +242,16 @@ class GazeTracking(object):
 
     def annotated_frame(self):
         """Returns the frame with pupils highlighted"""
-        frame = self.frame.copy()
+        # frame = self.frame.copy()
 
         if self.pupils_located:
-            color = (255, 255, 0)
+
             left_coords, r_left = self.pupil_left_coords()
             right_coords, r_right = self.pupil_right_coords()
-            cv2.circle(frame, left_coords, 3, color, 1)
-            cv2.circle(frame, right_coords, 3, color, 1)    
+            return True, left_coords, right_coords
+            # cv2.circle(frame, left_coords, 3, color, 1)
+            # cv2.circle(frame, right_coords, 3, color, 1)    
+        return False, None, None
             
             # uncomment to display points around the eyes and face
             # points = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
@@ -264,4 +266,4 @@ class GazeTracking(object):
             #     x = self.landmarks.part(point).x
             #     y = self.landmarks.part(point).y
             #     cv2.circle(frame, (x, y), 2, (0, 0, 255), -1)
-        return frame
+        # return frame

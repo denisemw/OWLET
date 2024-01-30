@@ -136,6 +136,7 @@ class OWLET(object):
         the x/y scale values for the polynomial transfer function, and the
         initial gaze/pupil locations
         """
+        print(cwd)
         self.gaze = GazeTracking(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
@@ -220,21 +221,32 @@ class OWLET(object):
 
     def match_audio(self, sub, task):
         
-        self.convert_video_to_audio_ffmpeg(sub)
-        self.convert_video_to_audio_ffmpeg(task)
+        try:
+            print(sub)
+            print(task)
         
-        subaudio = sub[0:-4] + ".wav" 
-        taskaudio = task[0:-4] + ".wav" 
-        self.found_match = False
-        
-        start, end, length, task_length = self.find_offset(subaudio, taskaudio)
-
-        if (end-2000) <= length and start != 0:
-            self.start = start
-            self.end = end
-            self.found_match = True
-        os.remove(subaudio)
-        return self.found_match
+            self.convert_video_to_audio_ffmpeg(sub)
+            self.convert_video_to_audio_ffmpeg(task)
+            
+            subaudio = sub[0:-4] + ".wav" 
+            taskaudio = task[0:-4] + ".wav" 
+            self.found_match = False
+            
+            start, end, length, task_length = self.find_offset(subaudio, taskaudio)
+    
+            if (end-2000) <= length and start != 0:
+                self.start = start
+                self.end = end
+                self.found_match = True
+            os.remove(subaudio)
+            return self.found_match
+        except:
+            self.found_match = False
+            self.start = 0
+            self.calib_start = 0
+            self.calib_end = 30000
+            self.end = 10000000
+            return False
    
     def initialize_cur_gaze_list(self):
         """Initializes lists for the current gaze positions"""
@@ -585,14 +597,18 @@ class OWLET(object):
         csv_writer.writerow(colnames)
 
         self.initialize_eye_tracker(cwd, 960, 540)
-        if calib:
-            self.start = self.calib_starttime
-            self.end = self.calib_endtime
+        # if calib:
+        #     self.start = self.calib_starttime
+        #     self.end = self.calib_endtime
         
         ret, frame = cap.read()
         height, width, _ = frame.shape
         resize = (height != 540 or width!=960)
+        # print(cwd)
 
+        # print(videofile)
+        # print(subDir)
+        # print(task_file)
         # show_output=True
         while (cap.isOpened()):
             ret, frame = cap.read()
@@ -603,10 +619,10 @@ class OWLET(object):
             if (frameId % frameval == 0):
                 
                 time = cap.get(cv2.CAP_PROP_POS_MSEC)
+                print(frameId)
                 
                 if time >= self.start and time <= self.end:
                     if resize: frame = cv2.resize(frame, (960,540))                        
-                    
                     
                     draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
                     frame = self.determine_gaze(frame)
