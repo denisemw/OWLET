@@ -180,13 +180,22 @@ class OWLET(object):
         return xval, yval
     
     
-    def convert_video_to_audio_ffmpeg(self, video_file, output_ext="wav"):
+    def convert_video_to_audio_ffmpeg(self, video_file, cwd, output_ext="wav"):
         """Converts video to audio directly using `ffmpeg` command
         with the help of subprocess module"""
             
+        ff_path = "ffmpeg/ffmpeg"
+        print("ff_path: ", ff_path)
+        print("cwd: ", cwd)
+        if hasattr(sys, '_MEIPASS'):
+           ffmpeg_path = os.path.join(sys._MEIPASS, ff_path)
+        else:
+           ffmpeg_path = os.path.join(cwd, ff_path)
+        print("ffmpeg: ", ffmpeg_path)
+            
         filename, ext = os.path.splitext(video_file)
         
-        subprocess.call(["ffmpeg", "-y", "-i", video_file, f"{filename}.{output_ext}"], 
+        subprocess.call([ffmpeg_path, "-y", "-i", video_file, f"{filename}.{output_ext}"], 
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.STDOUT)
         
@@ -219,14 +228,14 @@ class OWLET(object):
 
         return start, end, sub_audio_length, task_audio_length
 
-    def match_audio(self, sub, task):
+    def match_audio(self, sub, task, cwd):
         
         try:
             print(sub)
             print(task)
         
-            self.convert_video_to_audio_ffmpeg(sub)
-            self.convert_video_to_audio_ffmpeg(task)
+            self.convert_video_to_audio_ffmpeg(sub, cwd)
+            self.convert_video_to_audio_ffmpeg(task, cwd)
             
             subaudio = sub[0:-4] + ".wav" 
             taskaudio = task[0:-4] + ".wav" 
