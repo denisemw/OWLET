@@ -32,6 +32,7 @@ class OWLET_Interface(object):
         self.started = False
         self.override_audio_matching = False
         self.audio_state = 'disabled'
+        self.user_quit = False
         
         self.taskVideo, self.calibVideo, self.aois, self.stim_file, self.expDir = None, None, "", None, "Select folder"
 
@@ -78,6 +79,8 @@ class OWLET_Interface(object):
             folder_selected = filedialog.askdirectory(initialdir = self.dir) 
             os.chdir(folder_selected)
             self.subDir = folder_selected
+            path = Path(folder_selected)
+            self.dir = path.parent.absolute()
 
             self.videos = glob.glob('*.mp4') + glob.glob('*.mov')
             self.videos = [ x for x in self.videos if "annotated" not in x ]
@@ -89,7 +92,7 @@ class OWLET_Interface(object):
             # print(self.calibVideos) 
             self.calibVideos = [ x for x in self.calibVideos if "calibration" in x or "Calibration" in x ]
             # self.calibVideos = [ x for x in self.calibVideos if "Calibration" in x ]
-            print(self.calibVideos)
+            # print(self.calibVideos)
             if folder_selected == "":
                 folder_selected = "Select folder"
 
@@ -106,7 +109,7 @@ class OWLET_Interface(object):
             self.expDir = folder_selected
             os.chdir(folder_selected)
             self.taskVideo = glob.glob('*.mp4') + glob.glob('*.mov')
-            print("task video", self.taskVideo)
+            # print("task video", self.taskVideo)
             self.aois = glob.glob('*AOIs.csv')
             self.stim_file = glob.glob('*trials*csv')
             if len(self.taskVideo) == 0: self.taskVideo = None
@@ -155,19 +158,26 @@ class OWLET_Interface(object):
             
         def open_userguide():
             webbrowser.open("https://www.denisewerchan.com/owlet")
+            
+        
+
         
         def run_OWLET():
-            self.started = True
             # run_button['text'] = "Processing..."
+            print("self.videos ", self.videos)
             
             for video in self.videos:
                 
                 owlet = OWLET()
-                # print(video)
+                print(video, self.taskVideo)
                 subname , ext = os.path.splitext(video)
+               # print(subname)
+                subname = os.path.basename(video)
+                self.subVideo = os.path.abspath(os.path.join(self.subDir, video))
                 # subname = str(subname)
-
+    
                 calibVideo = [ x for x in self.calibVideos if str(subname) in x ]
+                 
                 file_name =  str(self.subDir) + '/' + str(subname) + "_error_log" + ".txt"   
                 if self.taskVideo == "Select folder": self.taskVideo = None
                 
@@ -180,20 +190,20 @@ class OWLET_Interface(object):
                         file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
                         file.close()
                         raise AssertionError
+               # print(calibVideo)
                 if calibVideo is not None and len(calibVideo) == 1:
                     calibVideo = os.path.abspath(os.path.join(self.subDir, calibVideo[0]))
-                    # owlet.calibrate_gaze(calibVideo, False, self.cwd)
+                    owlet.calibrate_gaze(calibVideo, False, self.cwd)
                 
                     
                 found_match = True
                 if self.taskVideo is not None and len(self.taskVideo) == 1:
-                    self.taskVideo = os.path.abspath(os.path.join(self.expDir, self.taskVideo[0]))
+                    task = os.path.abspath(os.path.join(self.expDir, self.taskVideo[0]))
                     experiment_name = os.path.basename(os.path.normpath(self.expDir))
                     file_name = str(self.subDir) + '/' + str(subname) + "_" + str(experiment_name) + "_error_log" + ".txt"
-                    videotest = os.path.abspath(os.path.join(self.subDir, video))
-                    print("video test", videotest)
+                    
                     if not self.override_audio_matching:
-                        found_match = owlet.match_audio(videotest, self.taskVideo, self.cwd)
+                        found_match = owlet.match_audio(self.subVideo, task, self.cwd)
                         print("found match ", found_match)
                         if found_match == False:
                             print("The task video was not found within the subject video. Processing halted.")
@@ -205,9 +215,11 @@ class OWLET_Interface(object):
                             continue
                 
                 os.chdir(self.subDir)
-                if found_match == True:
-                    df = owlet.process_subject(self.cwd, video, self.subDir, False, self.taskVideo, False)
-                    owlet.format_output(video, self.taskVideo, self.subDir, self.expDir, df, self.aois, self.stim_df)
+                # if found_match == True:
+                df = owlet.process_subject(self.cwd, video, self.subDir, False, task, False)
+                owlet.format_output(video, task, self.subDir, self.expDir, df, self.aois, self.stim_df)
+                # message = message + str(subname) + " finished\n"
+                # showMessage(message)
             tk.messagebox.showinfo(title="Processing finished.", message=("Results saved in " + str(self.subDir)))
             
             
@@ -258,7 +270,6 @@ class OWLET_Interface(object):
 
         try:
             window = tk.Tk()
-            print("i'm running")
             window.title("OWLET baby eye tracker")
             window.grid_columnconfigure(0, weight=2, uniform="fred")
             window.grid_columnconfigure(1, weight=1, uniform="fred")
@@ -358,13 +369,15 @@ class OWLET_Interface(object):
             tk.messagebox.showerror(title = "Exception raised",message = str(e))
         
     def start_OWLET(self):
+        print(self.videos)
         for video in self.videos:
             
             owlet = OWLET()
             print(video)
             subname , ext = os.path.splitext(video)
-            print(subname)
+           # print(subname)
             subname = os.path.basename(video)
+            self.subVideo = os.path.abspath(os.path.join(self.subDir, video))
             # subname = str(subname)
 
             calibVideo = [ x for x in self.calibVideos if str(subname) in x ]
@@ -381,7 +394,7 @@ class OWLET_Interface(object):
                     file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
                     file.close()
                     raise AssertionError
-            print(calibVideo)
+           # print(calibVideo)
             if calibVideo is not None and len(calibVideo) == 1:
                 calibVideo = os.path.abspath(os.path.join(self.subDir, calibVideo[0]))
                 owlet.calibrate_gaze(calibVideo, False, self.cwd)
@@ -391,19 +404,20 @@ class OWLET_Interface(object):
             if self.taskVideo is not None and len(self.taskVideo) == 1:
                 self.taskVideo = os.path.abspath(os.path.join(self.expDir, self.taskVideo[0]))
                 experiment_name = os.path.basename(os.path.normpath(self.expDir))
-                file_name = str(self.subDir) + '/' + str(subname) + "_" + str(experiment_name) + "_error_log" + ".txt"
-                print(file_name)
+                error_log_file = str(self.subDir) + '/' + str(subname) + "_" + str(experiment_name) + "_error_log" + ".txt"
+                # print(file_name)
                 if not self.override_audio_matching:
-                    found_match = owlet.match_audio(video, self.taskVideo)
+                    found_match = owlet.match_audio(self.subVideo, self.taskVideo, self.cwd)
+                    print("found match = ", found_match)
                     if found_match == False:
                         print("The task video was not found within the subject video. Processing halted.")
-                        file = open(file_name, "w")
+                        file = open(error_log_file, "w")
                         file.write("The task video was not found within the subject video. Processing halted..\n")
                         file.close()
                         exit()
             
-        
-            df = owlet.process_subject(self.cwd, video, self.subDir, False, self.taskVideo, False)
+       
+            df = owlet.process_subject(cwd = self.cwd, videofile = video, subDir = self.subDir, show_output = False, task_file = self.taskVideo, calib=False)
             owlet.format_output(video, self.taskVideo, self.subDir, self.expDir, df, self.aois, self.stim_df)
     
     

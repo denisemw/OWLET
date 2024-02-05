@@ -136,7 +136,6 @@ class OWLET(object):
         the x/y scale values for the polynomial transfer function, and the
         initial gaze/pupil locations
         """
-        print(cwd)
         self.gaze = GazeTracking(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
@@ -185,13 +184,10 @@ class OWLET(object):
         with the help of subprocess module"""
             
         ff_path = "ffmpeg/ffmpeg"
-        print("ff_path: ", ff_path)
-        print("cwd: ", cwd)
         if hasattr(sys, '_MEIPASS'):
            ffmpeg_path = os.path.join(sys._MEIPASS, ff_path)
         else:
            ffmpeg_path = os.path.join(cwd, ff_path)
-        print("ffmpeg: ", ffmpeg_path)
             
         filename, ext = os.path.splitext(video_file)
         
@@ -231,9 +227,7 @@ class OWLET(object):
     def match_audio(self, sub, task, cwd):
         
         try:
-            print(sub)
-            print(task)
-        
+
             self.convert_video_to_audio_ffmpeg(sub, cwd)
             self.convert_video_to_audio_ffmpeg(task, cwd)
             
@@ -242,6 +236,7 @@ class OWLET(object):
             self.found_match = False
             
             start, end, length, task_length = self.find_offset(subaudio, taskaudio)
+            # print(start, end, length, task_length)
     
             if (end-2000) <= length and start != 0:
                 self.start = start
@@ -574,6 +569,21 @@ class OWLET(object):
         
 
     def process_subject(self, cwd, videofile, subDir, show_output, task_file, calib):
+        """Calculates the ratio between the width and height of the eye frame,
+        shich can be used to determine whether the eye is closed or open.
+        It's the division of the width of the eye, by its height.
+
+        Arguments:
+            cwd: the directory where OWLET is running
+            videofile: the subject video 
+            subDir: the directory of the subject video
+            show_output: boolean indicating whether to show output while processing
+            task_file: the (optional) video of the task
+            calib: boolean indicating whether this is a calibration video that is being processed
+
+        Returns:
+            The computed ratio
+        """
     
 
         sub_file, ext = os.path.splitext(videofile)
@@ -619,6 +629,7 @@ class OWLET(object):
         # print(subDir)
         # print(task_file)
         # show_output=True
+        # count = 0
         while (cap.isOpened()):
             ret, frame = cap.read()
             frameId = cap.get(1) #current frame number
@@ -628,10 +639,12 @@ class OWLET(object):
             if (frameId % frameval == 0):
                 
                 time = cap.get(cv2.CAP_PROP_POS_MSEC)
-                print(frameId)
+                
                 
                 if time >= self.start and time <= self.end:
-                    if resize: frame = cv2.resize(frame, (960,540))                        
+                    if resize: frame = cv2.resize(frame, (960,540))  
+                    # count += 1
+                    # print(time)                     
                     
                     draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
                     frame = self.determine_gaze(frame)
@@ -661,7 +674,9 @@ class OWLET(object):
                     if key == ord('q'):
                         break                           
                     
-        cap.release()    
+        cap.release()
+        if task_file is not None:
+            cap2.release()
         out.release()
         # print("Done: " + sub)
         cv2.destroyAllWindows()
