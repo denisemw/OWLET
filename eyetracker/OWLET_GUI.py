@@ -92,7 +92,7 @@ class OWLET_Interface(object):
             # print(self.calibVideos) 
             self.calibVideos = [ x for x in self.calibVideos if "calibration" in x or "Calibration" in x ]
             # self.calibVideos = [ x for x in self.calibVideos if "Calibration" in x ]
-            # print(self.calibVideos)
+            print(self.calibVideos)
             if folder_selected == "":
                 folder_selected = "Select folder"
 
@@ -169,15 +169,16 @@ class OWLET_Interface(object):
             for video in self.videos:
                 
                 owlet = OWLET()
-                print(video, self.taskVideo)
+                # print(video, self.taskVideo)
+                task = None
                 subname , ext = os.path.splitext(video)
-               # print(subname)
-                subname = os.path.basename(video)
+                subname = subname.lstrip()
+                # subname = os.path.basename(video)
                 self.subVideo = os.path.abspath(os.path.join(self.subDir, video))
-                # subname = str(subname)
+
     
-                calibVideo = [ x for x in self.calibVideos if str(subname) in x ]
-                 
+                cab = [ x for x in self.calibVideos if str(subname) in x ]
+
                 file_name =  str(self.subDir) + '/' + str(subname) + "_error_log" + ".txt"   
                 if self.taskVideo == "Select folder": self.taskVideo = None
                 
@@ -190,10 +191,10 @@ class OWLET_Interface(object):
                         file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
                         file.close()
                         raise AssertionError
-               # print(calibVideo)
-                if calibVideo is not None and len(calibVideo) == 1:
-                    calibVideo = os.path.abspath(os.path.join(self.subDir, calibVideo[0]))
-                    owlet.calibrate_gaze(calibVideo, False, self.cwd)
+                if cab is not None and len(cab) == 1:
+                    print("Calibrating ", str(subname))
+                    cab = os.path.abspath(os.path.join(self.subDir, cab[0]))
+                    owlet.calibrate_gaze(cab, False, self.cwd)
                 
                     
                 found_match = True

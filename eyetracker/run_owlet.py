@@ -81,6 +81,7 @@ class OWLET(object):
             self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = df.iloc[0, 22:25]
         
         else:
+            print(calib_file)
             calib = LookingCalibration(show_output, cwd)
             ### FIX THIS ###
             # calib_audio = "/Users/werchd01/Dropbox/ORCA/Calibration.wav" 
@@ -538,16 +539,34 @@ class OWLET(object):
         yCoordList = list(filter(lambda item: item is not None and not math.isnan(item), yCoordList))
 
         for i in range(5):
-            diffX = min(xCoordList, key=lambda x:abs(x-Xcoords[i]))
-            diffY = min(yCoordList, key=lambda y:abs(y-Ycoords[i]))
-            minDistX[i] = diffX-Xcoords[i]
-            pixelsX[i] = diffX
-            minDistY[i] = diffY-Ycoords[i]
-            pixelsY[i] = diffY
-
-        Xdeviation  = int(np.mean(pixelsX))  
-        Ydeviation = int(np.mean(pixelsY))
-        overallDeviation = int((Xdeviation + Ydeviation) / 2)
+            if len(xCoordList) > 0:
+                diffX = min(xCoordList, key=lambda x:abs(x-Xcoords[i]))
+                minDistX[i] = diffX-Xcoords[i]
+                pixelsX[i] = diffX
+            else:
+                minDistX[i] = None
+                pixelsX[i] = None
+            if len(yCoordList) > 0:
+                diffY = min(yCoordList, key=lambda y:abs(y-Ycoords[i]))
+                minDistY[i] = diffY-Ycoords[i]
+                pixelsY[i] = diffY
+            else:
+                minDistY[i] = None
+                pixelsY[i] = None
+                
+        pixelsX = list(filter(lambda item: item is not None, pixelsX))
+        pixelsY = list(filter(lambda item: item is not None, pixelsY))
+        
+        if len(pixelsX) > 0:
+            Xdeviation  = int(np.mean(pixelsX))
+        else: Xdeviation = None
+        if len(pixelsY) > 0:
+            Ydeviation = int(np.mean(pixelsY))
+        else: Ydeviation = None
+        
+        if Xdeviation is not None and Ydeviation is not None:
+            overallDeviation = int((Xdeviation + Ydeviation) / 2)
+        else: overallDeviation = None
         sub_file , ext = os.path.splitext(calib_file)
         
         sub = os.path.basename(sub_file)[:-4]

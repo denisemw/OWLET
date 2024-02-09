@@ -16,9 +16,9 @@ from pathlib import Path
 import glob
 
 def videofile(value):
-    if not (value.endswith('.mp4') or value.endswith('.mov') or value.endswith('.m4v')):
+    if not value.is_dir():
         raise argparse.ArgumentTypeError(
-            'video file must be of type *.mp4, *.mov, or *.m4v')
+            'Filepath must point to a folder with recorded subject videos')
     return value
 
 def expFolder(value):
