@@ -98,14 +98,14 @@ def main():
                 
             os.chdir(subDir)
             subname , ext = os.path.splitext(subVideo)
-            subname = os.path.basename(subname)
+          #  subname = os.path.basename(subname)
             # subname = str(subname)
-            subname = subname.replace('_tasks', '')
-            print(subname, subDir)
+         #   subname = subname.replace('_tasks', '')
+         #   print(subname, subDir)
         
             calibVideos_tmp = [ x for x in calibVideos if str(subname) in x ]
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
-            print(calibVideo)
+         #   print(calibVideo)
         
             if args.display_output:
                 show_output = True
