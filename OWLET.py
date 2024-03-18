@@ -16,6 +16,7 @@ from pathlib import Path
 import glob
 
 def videofile(value):
+    value = Path(value)
     if not value.is_dir():
         raise argparse.ArgumentTypeError(
             'Filepath must point to a folder with recorded subject videos')
