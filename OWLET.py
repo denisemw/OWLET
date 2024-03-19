@@ -16,10 +16,6 @@ from pathlib import Path
 import glob
 
 def videofile(value):
-    value = Path(value)
-    if not value.is_dir():
-        raise argparse.ArgumentTypeError(
-            'Filepath must point to a folder with recorded subject videos')
     return value
 
 def expFolder(value):
@@ -47,6 +43,7 @@ def main():
     
     args = parse_arguments()
     
+    
     if not args.subject_video:
     
         owlet_gui = OWLET_GUI.OWLET_Interface(cwd)    
@@ -57,30 +54,31 @@ def main():
             #     owlet_gui.start_OWLET()
             continue_running = not(owlet_gui.user_quit)
     else:
+
+        value = Path(args.subject_video)
+        if not value.is_dir():
+            subVideo = args.subject_video
+            videos = [subVideo]
+            subDir = os.path.dirname(subVideo) #args.subject_folder
+            os.chdir(subDir)
+        else:
+            subDir = args.subject_video        
+            os.chdir(subDir)
+            videos = glob.glob('*.mp4') + glob.glob('*.mov')
+            videos = [ x for x in videos if "annotated" not in x ]
+            videos = [ x for x in videos if "calibration" not in x ]
+            videos = [ x for x in videos if "Calibration" not in x ]
+
         
         show_output = False
-        stim_df = None
-        # contains subject video (and calibration video if desired)
-        subDir = args.subject_video
-        # subDir = os.path.dirname(subVideo) #args.subject_folder
-        
-        os.chdir(subDir)
-
-        videos = glob.glob('*.mp4') + glob.glob('*.mov')
-        videos = [ x for x in videos if "annotated" not in x ]
-        videos = [ x for x in videos if "calibration" not in x ]
-        videos = [ x for x in videos if "Calibration" not in x ]
-        
+        stim_df = None        
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
-        # print(self.calibVideos) 
         calibVideos = [ x for x in calibVideos if "calibration" in x or "Calibration" in x ]
         
         for subVideo in videos:
             
             owlet = run_owlet.OWLET()
-    
-            
             taskVideo, calibVideo, aois, stim_file, expDir = None, None, "", None, None
             
             # contains optional experiment info (task video, aois, and stimulus/trial timing info)
