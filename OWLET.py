@@ -16,13 +16,19 @@ from pathlib import Path
 import glob
 
 def videofile(value):
+<<<<<<< Updated upstream
+=======
+   # if not value.is_dir():
+    #    raise argparse.ArgumentTypeError(
+    #        'Filepath must point to a folder with recorded subject videos')
+>>>>>>> Stashed changes
     return value
 
 def expFolder(value):
     value = Path(value)
-    if not value.is_dir():
-        raise argparse.ArgumentTypeError(
-            'Filepath must point to a folder with experiment info')
+#    if not value.is_dir():
+ #       raise argparse.ArgumentTypeError(
+  #          'Filepath must point to a folder with experiment info')
     return value
 
 def parse_arguments():
@@ -71,7 +77,22 @@ def main():
 
         
         show_output = False
+<<<<<<< Updated upstream
         stim_df = None        
+=======
+        stim_df = None
+        # contains subject video (and calibration video if desired)
+        subVideo = args.subject_video
+        subDir = os.path.dirname(subVideo) #args.subject_folder
+        
+        os.chdir(subDir)
+
+        videos = glob.glob('*.mp4') + glob.glob('*.mov')
+        videos = [ x for x in videos if "annotated" not in x ]
+        videos = [ x for x in videos if "calibration" not in x ]
+        videos = [ x for x in videos if "Calibration" not in x ]
+        
+>>>>>>> Stashed changes
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
         calibVideos = [ x for x in calibVideos if "calibration" in x or "Calibration" in x ]
