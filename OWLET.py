@@ -16,12 +16,6 @@ from pathlib import Path
 import glob
 
 def videofile(value):
-<<<<<<< Updated upstream
-=======
-   # if not value.is_dir():
-    #    raise argparse.ArgumentTypeError(
-    #        'Filepath must point to a folder with recorded subject videos')
->>>>>>> Stashed changes
     return value
 
 def expFolder(value):
@@ -77,47 +71,44 @@ def main():
 
         
         show_output = False
-<<<<<<< Updated upstream
         stim_df = None        
-=======
-        stim_df = None
-        # contains subject video (and calibration video if desired)
-        subVideo = args.subject_video
-        subDir = os.path.dirname(subVideo) #args.subject_folder
-        
-        os.chdir(subDir)
-
-        videos = glob.glob('*.mp4') + glob.glob('*.mov')
-        videos = [ x for x in videos if "annotated" not in x ]
-        videos = [ x for x in videos if "calibration" not in x ]
-        videos = [ x for x in videos if "Calibration" not in x ]
-        
->>>>>>> Stashed changes
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
         calibVideos = [ x for x in calibVideos if "calibration" in x or "Calibration" in x ]
+        print(calibVideos)
         
         for subVideo in videos:
             
             owlet = run_owlet.OWLET()
-            taskVideo, calibVideo, aois, stim_file, expDir = None, None, "", None, None
+            taskVideo, calibVideo, aois, stim_file, expDir, taskName = None, None, "", None, None, ""
             
             # contains optional experiment info (task video, aois, and stimulus/trial timing info)
             if args.experiment_info:
                 expDir = args.experiment_info
                 os.chdir(expDir)
                 taskVideo = glob.glob('*.mp4') + glob.glob('*.mov')
+                
+                
                 aois = glob.glob('*AOIs.csv')
                 stim_file = glob.glob('*trials*csv')
-                if len(taskVideo) == 0: taskVideo = None
-                if len(aois) == 0: 
+                if len(taskVideo) != 1: 
+                    taskVideo = None
+                else: 
+                    taskName, ext = os.path.splitext(taskVideo[0])
+                    taskName = '_' + taskName
+                print(taskName)
+                if len(aois) != 1: 
                     aois = ""
                 else: 
                     aois = aois[0]
-                if len(stim_file) == 0: stim_file = None
+                if len(stim_file) != 0: stim_file = None
                 
             os.chdir(subDir)
             subname , ext = os.path.splitext(subVideo)
+            if taskName != "":
+                subname = os.path.basename(subname)
+                subname = subname.replace(taskName, '')
+                print(subname)
           #  subname = os.path.basename(subname)
             # subname = str(subname)
          #   subname = subname.replace('_tasks', '')
@@ -125,7 +116,7 @@ def main():
         
             calibVideos_tmp = [ x for x in calibVideos if str(subname) in x ]
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
-         #   print(calibVideo)
+            print(calibVideo)
         
             if args.display_output:
                 show_output = True

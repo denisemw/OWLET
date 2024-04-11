@@ -610,7 +610,12 @@ class OWLET(object):
         ret2 = True
         taskname = ""
         if task_file is not None:
-            taskname = "_" + str(os.path.basename(task_file)[0:-4])
+            taskname = str(os.path.basename(task_file)[0:-4])
+            if taskname in str(sub_file):
+                taskname = ""
+            else:
+                taskname = "_" + taskname
+        
         outfile = str(sub_file) + taskname + "_annotated.mp4"                
         cap = cv2.VideoCapture(videofile)   # capturing the baby video from the given path
         fps = cap.get(5)
@@ -618,7 +623,8 @@ class OWLET(object):
         if fps > 30: fps2 = 30
         else: fps2  = fps
 
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+
         if task_file is not None:
             cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path
             out = cv2.VideoWriter(outfile, fourcc, fps2, (1920, 540))
@@ -708,7 +714,11 @@ class OWLET(object):
         sub, ext = os.path.splitext(videofile)
         taskname = ""
         if task_file is not None:
-            taskname = "_" + str(os.path.basename(task_file)[0:-4])
+            taskname = str(os.path.basename(task_file)[0:-4])
+            if taskname in str(sub):
+                taskname = ""
+            else:
+                taskname = "_" + taskname
             
         if aoi_file != "":
             aois =  pd.read_csv(os.path.abspath(os.path.join(expDir, aoi_file)))
