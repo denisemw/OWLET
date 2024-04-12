@@ -5,7 +5,8 @@ Created on Sun Aug 21 11:04:53 2022
 
 @author: werchd01
 """
-
+import sys
+print(sys.path)
 #from owlet import OWLET
 import tkinter as tk
 from tkinter import filedialog
@@ -17,6 +18,7 @@ from run_owlet import OWLET
 from pathlib import Path
 import webbrowser
 import glob
+
 
 class OWLET_Interface(object):
     
