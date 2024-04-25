@@ -118,9 +118,11 @@ class LookingCalibration(object):
         try:
             self.blinks.sort()
             mid = len(self.blinks)//2
+            begin_val = int(len(self.blinks) * .15)
+            end_val = len(self.blinks) - begin_val
             mean = self.blinks[mid] #sum(blinks)/len(blinks)
-            maximum = self.blinks[-1]
-            minimum = self.blinks[0]
+            maximum = self.blinks[end_val]
+            minimum = self.blinks[begin_val]
             # if self.check_range_zero == 0: return (2.5, 3.5, 1.5 )
             return (mean, maximum, minimum)
         except:
@@ -136,8 +138,14 @@ class LookingCalibration(object):
         
     def get_min_max_hor(self):
         try:
-            min_look = min(self.hor_ratios)
-            max_look = max(self.hor_ratios)
+            self.hor_ratios.sort()
+            mid = len(self.hor_ratios)//2
+            begin_val = int(len(self.hor_ratios) * .15)
+            end_val = len(self.hor_ratios) - begin_val
+            max_look = self.hor_ratios[end_val]
+            min_look = self.hor_ratios[begin_val]
+            # min_look = min(self.hor_ratios)
+            # max_look = max(self.hor_ratios)
             range_vals = max_look - min_look
             middle = (min_look + max_look)/2
             # if self.check_range_zero == 0: return .5, .8, .3, .65
@@ -147,8 +155,14 @@ class LookingCalibration(object):
 
     def get_min_max_hor2(self):
         try:
-            min_look = min(self.hor_ratios2)
-            max_look = max(self.hor_ratios2)
+            self.hor_ratios2.sort()
+            begin_val = int(len(self.hor_ratios2) * .15)
+            end_val = len(self.hor_ratios2) - begin_val
+            max_look = self.hor_ratios2[end_val]
+            min_look = self.hor_ratios2[begin_val]
+            
+            # min_look = min(self.hor_ratios2)
+            # max_look = max(self.hor_ratios2)
             range_vals = max_look - min_look
             middle = (min_look + max_look)/2
             # if self.check_range_zero == 0: return .4, .9, .5, .65
@@ -159,17 +173,35 @@ class LookingCalibration(object):
 
     def get_min_max_ver(self):
         try:
-            toplook = min(self.ver_ratios)
-            downlook = max(self.ver_ratios)
+            self.ver_ratios.sort()
+            begin_val = int(len(self.ver_ratios) * .15)
+            end_val = len(self.ver_ratios) - begin_val
+            downlook = self.ver_ratios[end_val]
+            toplook = self.ver_ratios[begin_val]
+
+            # toplook = min(self.ver_ratios)
+            # downlook = max(self.ver_ratios)
             range_vals = downlook - toplook
             middle = (toplook + downlook)/2
+
+            self.ver_ratios_left.sort()
+            begin_val = int(len(self.ver_ratios_left) * .15)
+            end_val = len(self.ver_ratios_left) - begin_val
+            downlook_left = self.ver_ratios_left[end_val]
+            toplook_left = self.ver_ratios_left[begin_val]
             
-            toplook_left = min(self.ver_ratios_left)
-            downlook_left = max(self.ver_ratios_left)
+            # toplook_left = min(self.ver_ratios_left)
+            # downlook_left = max(self.ver_ratios_left)
             range_vals_left = downlook_left - toplook_left
+
+            self.ver_ratios_right.sort()
+            begin_val = int(len(self.ver_ratios_right) * .15)
+            end_val = len(self.ver_ratios_right) - begin_val
+            downlook_right = self.ver_ratios_right[end_val]
+            toplook_right = self.ver_ratios_right[begin_val]
             
-            toplook_right = np.min(self.ver_ratios_right)
-            downlook_right = np.max(self.ver_ratios_right)
+            # toplook_right = np.min(self.ver_ratios_right)
+            # downlook_right = np.max(self.ver_ratios_right)
             range_vals_right = downlook_right - toplook_right
             # if self.check_range_zero == 0: return .025, .06, .035, .0425, .035, .035, .025, .025
     

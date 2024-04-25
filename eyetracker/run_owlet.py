@@ -107,6 +107,13 @@ class OWLET(object):
             self.min_xval2, self.max_xval2, self.range_xvals2, self.middle_x2 = calib.get_min_max_hor2()
             
             self.mean, self.maximum, self.minimum = calib.get_eye_ratio()
+            range_y =  self.maximum - self.minimum 
+            midr = (self.maximum + self.minimum ) / 2
+
+            self.min_yval, self.max_yval, self.range_yvals, self.middle_y =  self.minimum, self.maximum, range_y, midr
+            self.range_yvals_left, self.range_yvals_right,  self.min_yval_left, self.min_yval_right = range_y, range_y, self.maximum, self.maximum,
+
+          
             
             self.eyearea = calib.get_eye_area()
             
@@ -212,16 +219,23 @@ class OWLET(object):
         """
         y_within, sr_within = librosa.load(subject_audio, sr=None)
         y_find, sr_find = librosa.load(task_audio, sr=sr_within)
-    
-        c = signal.correlate(y_within, y_find, mode='valid', method='fft')
-        peak = np.argmax(c)
-        start = round(peak / sr_within, 2) * 1000
-        sub_audio_length = librosa.get_duration(y_within, sr_within) * 1000
-        task_audio_length = librosa.get_duration(y_find, sr_find) * 1000
         
-        if c[peak] < 90:
+
+        c = signal.correlate(y_within, y_find, mode='valid', method='fft')
+        
+        peak = np.argmax(c)
+        
+        start = round(peak / sr_within, 2) * 1000
+        
+        sub_audio_length = librosa.get_duration(y=y_within, sr=sr_within) * 1000
+        print('IM BEING CALLED')
+        print(c[peak])
+        task_audio_length = librosa.get_duration(y=y_find, sr=sr_find) * 1000
+        
+        if c[peak] < 60:
             start = 0
         end = start + (task_audio_length)
+        print(c[peak])
 
         return start, end, sub_audio_length, task_audio_length
 
@@ -235,9 +249,10 @@ class OWLET(object):
             subaudio = sub[0:-4] + ".wav" 
             taskaudio = task[0:-4] + ".wav" 
             self.found_match = False
+            print(subaudio, taskaudio)
             
             start, end, length, task_length = self.find_offset(subaudio, taskaudio)
-            # print(start, end, length, task_length)
+            print(start, end, length, task_length)
     
             if (end-2000) <= length and start != 0:
                 self.start = start
@@ -367,6 +382,7 @@ class OWLET(object):
                 cur_y_right = sum(tmplist4)/len(tmplist4)
     
         self.is_looking = True
+        # print(area_ratio)
         
         # head is so far turned that baby is not looking at screen
         if area_ratio is not None and (area_ratio < .5 or area_ratio > 1.5):
@@ -623,7 +639,7 @@ class OWLET(object):
         if fps > 30: fps2 = 30
         else: fps2  = fps
 
-        fourcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
         if task_file is not None:
             cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path

@@ -12,6 +12,7 @@ class Eye(object):
 
     LEFT_EYE_POINTS = [36, 37, 38, 39, 40, 41]
     RIGHT_EYE_POINTS = [42, 43, 44, 45, 46, 47]
+
     CHIN_NOSE = [8, 33]
     NOSE = [33, 28]
     
@@ -43,7 +44,7 @@ class Eye(object):
             side: Indicates whether it's the left eye (0) or the right eye (1)
         """
 
-        region = np.array([(landmarks.part(point).x, landmarks.part(point).y) for point in points])
+        region = np.array([(landmarks[point][0], landmarks[point][1]) for point in points])
         region = region.astype(np.int32)
 
         margin = 0
@@ -102,22 +103,22 @@ class Eye(object):
         """
         try:
             if side == 0:
-                self.width = math.dist((landmarks.part(36).x, landmarks.part(36).y), (landmarks.part(39).x,landmarks.part(39).y))
-                a = math.dist( (landmarks.part(38).x, landmarks.part(38).y), (landmarks.part(40).x, landmarks.part(40).y))
-                b = math.dist( (landmarks.part(37).x, landmarks.part(37).y), (landmarks.part(41).x, landmarks.part(41).y))
+                self.width = math.dist((landmarks[36][0], landmarks[36][1]), (landmarks[39][0],landmarks[39][1]))
+                a = math.dist( (landmarks[38][0], landmarks[38][1]), (landmarks[40][0], landmarks[40][1]))
+                b = math.dist( (landmarks[37][0], landmarks[37][1]), (landmarks[41][0], landmarks[41][1]))
                 ratio = (2.0 * self.width) / (a + b)
                 self.height = (a+b)/2
-                self.inner_y = landmarks.part(39).y
-                self.inner_x = landmarks.part(39).x
+                self.inner_y = landmarks[39][1]
+                self.inner_x = landmarks[39][0]
                 
             else:
-                self.width = math.dist( (landmarks.part(42).x, landmarks.part(42).y), (landmarks.part(45).x, landmarks.part(45).y))
-                a = math.dist( (landmarks.part(43).x, landmarks.part(43).y), (landmarks.part(47).x, landmarks.part(47).y))
-                b = math.dist( (landmarks.part(44).x, landmarks.part(44).y), (landmarks.part(46).x, landmarks.part(46).y))
+                self.width = math.dist( (landmarks[42][0], landmarks[42][1]), (landmarks[45][0], landmarks[45][1]))
+                a = math.dist( (landmarks[43][0], landmarks[43][1]), (landmarks[47][0], landmarks[47][1]))
+                b = math.dist( (landmarks[44][0], landmarks[44][1]), (landmarks[46][0], landmarks[46][1]))
                 ratio = (2.0 * self.width) / (a + b)
                 self.height = (a+b)/2
-                self.inner_y = landmarks.part(42).y
-                self.inner_x = landmarks.part(42).x
+                self.inner_y = landmarks[42][1]
+                self.inner_x = landmarks[42][0]
 
         except Exception:
             ratio = None

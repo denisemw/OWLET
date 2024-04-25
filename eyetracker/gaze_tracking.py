@@ -4,6 +4,7 @@ import cv2
 import dlib
 from eye import Eye
 # import face_recognition
+from imutils import face_utils
 
 
 class GazeTracking(object):
@@ -20,16 +21,21 @@ class GazeTracking(object):
         self.face_index = 0
         self.face = None
         # _face_detector is used to detect faces
-        self._face_detector = dlib.get_frontal_face_detector()
+        # self._face_detector = dlib.get_frontal_face_detector()
+        cnn_model_path = os.path.abspath(os.path.join(cwd, "eyetracker/mmod_human_face_detector.dat"))
+
+        self._face_detector = dlib.cnn_face_detection_model_v1(cnn_model_path)
         self.eye_scale = mean
-        self.blink_thresh = maximum * 1.1
-        self.blink_thresh2 = minimum * .9
+        self.blink_thresh = maximum #* 1.1
+        self.blink_thresh2 = minimum # * .9
         self.leftpoint = None
         self.rightpoint = None
         self.leftright_eyeratio = ratio
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
+        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/eye_predictor.dat"))
+
         self._predictor = dlib.shape_predictor(model_path)
         # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
         # self.eye_classifier = cv2.CascadeClassifier(eyepath)
@@ -76,12 +82,17 @@ class GazeTracking(object):
             self.face_index = 0
         
         try:
-            landmarks = self._predictor(frame, faces[self.face_index])
+            # print(self.face_index)
+            face = faces[self.face_index]
+            # landmarks = shape_to_np(predictor(gray, faceRect))
+            landmarks = face_utils.shape_to_np(self._predictor(frame, face.rect))
+            # self.chin = landmarks[8][1]
+            # print(self.chin)
             self.landmarks = landmarks
             self.eye_left = Eye(frame, landmarks, 0, self.leftpoint)
             self.eye_right = Eye(frame, landmarks, 1, self.rightpoint)
             self.face = faces[self.face_index]
-            self.chin = landmarks.part(8).y
+            
             try:
                 self.leftpoint = (self.eye_left.pupil.x, self.eye_left.pupil.y)
                 self.rightpoint = (self.eye_right.pupil.x, self.eye_right.pupil.y)
@@ -184,8 +195,8 @@ class GazeTracking(object):
             xright = (self.eye_right.pupil.x ) / self.eye_right.width 
             xavg = (xleft + xright)/2
 
-            yleft = (self.eye_left.pupil.y / self.eye_left.inner_y) 
-            yright = (self.eye_right.pupil.y / self.eye_right.inner_y)
+            yleft = self.eye_left.blinking #(self.eye_left.pupil.y / self.eye_left.inner_y) 
+            yright = self.eye_right.blinking #(self.eye_right.pupil.y / self.eye_right.inner_y)
             yavg = (yleft + yright)/2
             
             scale =  self.eye_scale / self.eye_ratio()
@@ -229,6 +240,7 @@ class GazeTracking(object):
         """
         if self.pupils_located:
             blinking_ratio = self.eye_ratio()
+            print(blinking_ratio)
             return blinking_ratio > self.blink_thresh or blinking_ratio < self.blink_thresh2 
         
     def eye_ratio(self):
