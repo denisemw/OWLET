@@ -240,7 +240,7 @@ class GazeTracking(object):
         """
         if self.pupils_located:
             blinking_ratio = self.eye_ratio()
-            print(blinking_ratio)
+            # print(blinking_ratio)
             return blinking_ratio > self.blink_thresh or blinking_ratio < self.blink_thresh2 
         
     def eye_ratio(self):

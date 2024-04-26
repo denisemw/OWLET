@@ -118,7 +118,7 @@ class LookingCalibration(object):
         try:
             self.blinks.sort()
             mid = len(self.blinks)//2
-            begin_val = int(len(self.blinks) * .15)
+            begin_val = int(len(self.blinks) * .1)
             end_val = len(self.blinks) - begin_val
             mean = self.blinks[mid] #sum(blinks)/len(blinks)
             maximum = self.blinks[end_val]
@@ -140,7 +140,7 @@ class LookingCalibration(object):
         try:
             self.hor_ratios.sort()
             mid = len(self.hor_ratios)//2
-            begin_val = int(len(self.hor_ratios) * .15)
+            begin_val = int(len(self.hor_ratios) * .1)
             end_val = len(self.hor_ratios) - begin_val
             max_look = self.hor_ratios[end_val]
             min_look = self.hor_ratios[begin_val]
@@ -156,7 +156,7 @@ class LookingCalibration(object):
     def get_min_max_hor2(self):
         try:
             self.hor_ratios2.sort()
-            begin_val = int(len(self.hor_ratios2) * .15)
+            begin_val = int(len(self.hor_ratios2) * .1)
             end_val = len(self.hor_ratios2) - begin_val
             max_look = self.hor_ratios2[end_val]
             min_look = self.hor_ratios2[begin_val]
@@ -174,7 +174,7 @@ class LookingCalibration(object):
     def get_min_max_ver(self):
         try:
             self.ver_ratios.sort()
-            begin_val = int(len(self.ver_ratios) * .15)
+            begin_val = int(len(self.ver_ratios) * .1)
             end_val = len(self.ver_ratios) - begin_val
             downlook = self.ver_ratios[end_val]
             toplook = self.ver_ratios[begin_val]
@@ -185,7 +185,7 @@ class LookingCalibration(object):
             middle = (toplook + downlook)/2
 
             self.ver_ratios_left.sort()
-            begin_val = int(len(self.ver_ratios_left) * .15)
+            begin_val = int(len(self.ver_ratios_left) * .1)
             end_val = len(self.ver_ratios_left) - begin_val
             downlook_left = self.ver_ratios_left[end_val]
             toplook_left = self.ver_ratios_left[begin_val]
@@ -195,7 +195,7 @@ class LookingCalibration(object):
             range_vals_left = downlook_left - toplook_left
 
             self.ver_ratios_right.sort()
-            begin_val = int(len(self.ver_ratios_right) * .15)
+            begin_val = int(len(self.ver_ratios_right) * .1)
             end_val = len(self.ver_ratios_right) - begin_val
             downlook_right = self.ver_ratios_right[end_val]
             toplook_right = self.ver_ratios_right[begin_val]
