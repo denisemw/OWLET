@@ -118,7 +118,7 @@ class LookingCalibration(object):
         try:
             self.blinks.sort()
             mid = len(self.blinks)//2
-            begin_val = int(len(self.blinks) * .1)
+            begin_val = int(len(self.blinks) * .15)
             end_val = len(self.blinks) - begin_val
             mean = self.blinks[mid] #sum(blinks)/len(blinks)
             maximum = self.blinks[end_val]
@@ -142,8 +142,8 @@ class LookingCalibration(object):
             mid = len(self.hor_ratios)//2
             begin_val = int(len(self.hor_ratios) * .1)
             end_val = len(self.hor_ratios) - begin_val
-            max_look = self.hor_ratios[end_val]
-            min_look = self.hor_ratios[begin_val]
+            max_look = self.hor_ratios[-1]
+            min_look = self.hor_ratios[0]
             # min_look = min(self.hor_ratios)
             # max_look = max(self.hor_ratios)
             range_vals = max_look - min_look
@@ -156,10 +156,10 @@ class LookingCalibration(object):
     def get_min_max_hor2(self):
         try:
             self.hor_ratios2.sort()
-            begin_val = int(len(self.hor_ratios2) * .1)
+            begin_val = int(len(self.hor_ratios2) * .15)
             end_val = len(self.hor_ratios2) - begin_val
-            max_look = self.hor_ratios2[end_val]
-            min_look = self.hor_ratios2[begin_val]
+            max_look = self.hor_ratios2[-1]
+            min_look = self.hor_ratios2[0]
             
             # min_look = min(self.hor_ratios2)
             # max_look = max(self.hor_ratios2)
@@ -173,6 +173,8 @@ class LookingCalibration(object):
 
     def get_min_max_ver(self):
         try:
+
+            
             self.ver_ratios.sort()
             begin_val = int(len(self.ver_ratios) * .1)
             end_val = len(self.ver_ratios) - begin_val
@@ -203,6 +205,8 @@ class LookingCalibration(object):
             # toplook_right = np.min(self.ver_ratios_right)
             # downlook_right = np.max(self.ver_ratios_right)
             range_vals_right = downlook_right - toplook_right
+            if range_vals == 0 or range_vals_left == 0 or range_vals_right == 0:
+                return .025, .06, .035, .0425, .035, .035, .025, .025
             # if self.check_range_zero == 0: return .025, .06, .035, .0425, .035, .035, .025, .025
     
             return toplook, downlook, range_vals, middle, range_vals_left, range_vals_right, toplook_left, toplook_right

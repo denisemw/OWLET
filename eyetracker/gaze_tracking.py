@@ -33,8 +33,8 @@ class GazeTracking(object):
         self.leftright_eyeratio = ratio
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
-        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
-        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/eye_predictor.dat"))
+        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
+        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/eye_predictor.dat"))
 
         self._predictor = dlib.shape_predictor(model_path)
         # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
@@ -195,8 +195,8 @@ class GazeTracking(object):
             xright = (self.eye_right.pupil.x ) / self.eye_right.width 
             xavg = (xleft + xright)/2
 
-            yleft = self.eye_left.blinking #(self.eye_left.pupil.y / self.eye_left.inner_y) 
-            yright = self.eye_right.blinking #(self.eye_right.pupil.y / self.eye_right.inner_y)
+            yleft = (self.eye_left.pupil.y / self.eye_left.inner_y) 
+            yright = (self.eye_right.pupil.y / self.eye_right.inner_y)
             yavg = (yleft + yright)/2
             
             scale =  self.eye_scale / self.eye_ratio()

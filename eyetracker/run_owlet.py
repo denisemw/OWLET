@@ -405,6 +405,7 @@ class OWLET(object):
             val = self.threshold/2
             diff_left = abs(cur_x_left - self.prior_xleft)
             diff_right = abs(cur_x_right - self.prior_xright)
+            # print(diff_left, diff_right, val)
             # one eye jumped largely, so isn't a real saccade
             if diff_left < val or diff_right < val or diff_left/diff_right < .4 or diff_left/diff_right > 2.5:# or \
             # (diff_left2 > 0 and diff_right2 < 0) or (diff_left2 < 0 and diff_right2 > 0): # or \
@@ -423,6 +424,8 @@ class OWLET(object):
                     self.cur_fix_xright = [self.potential_fix_xright]
 
                     self.text = "saccade"
+                    print("saccade")
+                    print(diff_left, diff_right, val)
                 self.append_cur_gaze_list(cur_x, curx2, cur_y, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
                 self.initialize_potential_gaze_list()
             else:
@@ -664,13 +667,15 @@ class OWLET(object):
         ret, frame = cap.read()
         height, width, _ = frame.shape
         resize = (height != 540 or width!=960)
+
         # print(cwd)
 
         # print(videofile)
         # print(subDir)
         # print(task_file)
         # show_output=True
-        # count = 0
+        count = 0
+        draw_pupils = False
         while (cap.isOpened()):
             ret, frame = cap.read()
             frameId = cap.get(1) #current frame number
@@ -686,9 +691,9 @@ class OWLET(object):
                     if resize: frame = cv2.resize(frame, (960,540))  
                     # count += 1
                     # print(time)                     
-                    
-                    draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
-                    frame = self.determine_gaze(frame)
+                    if count % 2 == 0:
+                        draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
+                        frame = self.determine_gaze(frame)
                     
                     if draw_pupils: 
                         cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
@@ -707,6 +712,7 @@ class OWLET(object):
                     if show_output:
                         cv2.imshow(sub, final)
                     out.write(final)
+                    # count += 1
 
                     csv_writer.writerow([sub, time, frameId, xcoord, ycoord, text, ""])
                     
