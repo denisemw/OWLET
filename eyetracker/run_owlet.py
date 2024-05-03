@@ -127,7 +127,7 @@ class OWLET(object):
             
             
             calib_settings.to_csv(csv_file, index = False)
-            self.calib_statistics(cwd, calib_file, subDir)
+            # self.calib_statistics(cwd, calib_file, subDir)
         
 
         
