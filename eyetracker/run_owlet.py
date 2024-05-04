@@ -624,7 +624,7 @@ class OWLET(object):
         if fps > 30: fps2 = 30
         else: fps2  = fps
 
-        fourcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
         if task_file is not None:
             cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path
