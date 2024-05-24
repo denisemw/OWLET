@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import glob
 
+
 def videofile(value):
     return value
 
@@ -75,7 +76,6 @@ def main():
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
         calibVideos = [ x for x in calibVideos if "calibration" in x or "Calibration" in x ]
-        print(calibVideos)
         
         for subVideo in videos:
             
@@ -94,9 +94,8 @@ def main():
                 if len(taskVideo) != 1: 
                     taskVideo = None
                 else: 
-                    taskName, ext = os.path.splitext(taskVideo[0])
-                    taskName = '_' + taskName
-                print(taskName)
+                    taskName = os.path.basename(os.path.normpath(expDir))
+                    taskName = str(taskName).lower()
                 if len(aois) != 1: 
                     aois = ""
                 else: 
@@ -105,18 +104,13 @@ def main():
                 
             os.chdir(subDir)
             subname , ext = os.path.splitext(subVideo)
+            subname = str(subname).lower()
+            subname.replace("tasks", "")
             if taskName != "":
-                subname = os.path.basename(subname)
-                subname = subname.replace(taskName, '')
-                print(subname)
-          #  subname = os.path.basename(subname)
-            # subname = str(subname)
-         #   subname = subname.replace('_tasks', '')
-         #   print(subname, subDir)
+                subname = str(subname).replace(taskName, '')
         
             calibVideos_tmp = [ x for x in calibVideos if str(subname) in x ]
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
-            print(calibVideo)
         
             if args.display_output:
                 show_output = True
@@ -126,10 +120,8 @@ def main():
             if taskVideo is not None:
                 experiment_name = os.path.basename(os.path.normpath(expDir))
                 file_name = str(subDir) + '/' + str(subname) + "_" + str(experiment_name) + "_error_log" + ".txt"
-                print(file_name)
             else:
                 file_name =  str(subDir) + '/' + str(subname) + "_error_log" + ".txt"
-                print(file_name)
                 
             if stim_file is not None and len(stim_file) == 1:
                 success, stim_df = owlet.read_stim_markers(os.path.join(expDir, stim_file[0]))
@@ -143,7 +135,6 @@ def main():
             
             if calibVideo is not None and len(calibVideo) == 1:
                 calibVideo = os.path.abspath(os.path.join(subDir, calibVideo[0]))
-                print(calibVideo)
                 owlet.calibrate_gaze(calibVideo, show_output, cwd)
             
                 
@@ -152,7 +143,6 @@ def main():
                 taskVideo = os.path.abspath(os.path.join(expDir, taskVideo[0]))
                 if not args.override_audio_matching:
                     found_match = owlet.match_audio(subVideo, taskVideo, cwd)
-                    print("found match = ", found_match)
                     if found_match == False:
                         print("The task video was not found within the subject video. Processing halted.")
                         file = open(file_name, "w")
