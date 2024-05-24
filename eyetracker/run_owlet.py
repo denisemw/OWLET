@@ -65,6 +65,7 @@ class OWLET(object):
         sub_file , ext = os.path.splitext(calib_file)
         subDir = os.path.dirname(calib_file)
         csv_file = str(sub_file) + "_settings.csv"
+
         
         if Path(csv_file).is_file():
             df = pd.read_csv(csv_file)
@@ -81,7 +82,6 @@ class OWLET(object):
             self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = df.iloc[0, 22:25]
         
         else:
-            print(calib_file)
             calib = LookingCalibration(show_output, cwd)
             ### FIX THIS ###
             # calib_audio = "/Users/werchd01/Dropbox/ORCA/Calibration.wav" 
@@ -141,6 +141,8 @@ class OWLET(object):
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
             self.threshold = .1/6 
+        if self.range_yvals < .1:
+            self.threshold = .1/6  
         self.x_scale_value = 960/(self.range_xvals * .9)
         self.y_scale_value = 540/(self.range_yvals * .8)
         self.y_scale_value_left = 540/(self.range_yvals_left * .8)
