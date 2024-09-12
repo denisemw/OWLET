@@ -103,14 +103,20 @@ def main():
                 if len(stim_file) != 0: stim_file = None
                 
             os.chdir(subDir)
+            subVideo = os.path.basename(subVideo)
             subname , ext = os.path.splitext(subVideo)
             subname = str(subname).lower()
-            subname.replace("tasks", "")
+            # subname.replace("tasks", "")
+            print(taskName)
+            print(subname)
             if taskName != "":
+                taskName = "_" + taskName
                 subname = str(subname).replace(taskName, '')
+                print(subname)
         
             calibVideos_tmp = [ x for x in calibVideos if str(subname) in x ]
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
+            print(calibVideo)
         
             if args.display_output:
                 show_output = True
