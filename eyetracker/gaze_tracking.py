@@ -27,6 +27,8 @@ class GazeTracking(object):
         self.leftpoint = None
         self.rightpoint = None
         self.leftright_eyeratio = ratio
+        if ratio==0:
+            self.leftright_eyeratio = 1
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
@@ -76,6 +78,7 @@ class GazeTracking(object):
             self.face_index = 0
         
         try:
+            # print(self.face_index)
             landmarks = self._predictor(frame, faces[self.face_index])
             self.landmarks = landmarks
             self.eye_left = Eye(frame, landmarks, 0, self.leftpoint)
@@ -166,7 +169,10 @@ class GazeTracking(object):
         try:
             leftArea = self.eye_left.area  
             rightArea = self.eye_right.area  
-            ratio = (leftArea / rightArea)
+            if rightArea and rightArea != 0:
+                ratio = (leftArea / rightArea)
+            else:
+                ratio = None
             return ratio
         except Exception:
             return None
