@@ -7,6 +7,9 @@ Created on Mon Aug 22 18:57:55 2022
 """
 import sys
 sys.path.append("eyetracker")
+from eyetracker import OWLET_GUI
+from eyetracker import run_owlet
+
 import OWLET_GUI
 import os
 import argparse
