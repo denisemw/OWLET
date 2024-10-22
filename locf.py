@@ -8,47 +8,50 @@ import os
 from pathlib import Path
 import glob
 
-def locf_with_limit(series, max_consecutive_missing=30):
+def locf_with_limit(series, max_consecutive_missing=20):
     # Create a boolean mask for missing values
     missing_mask = series.isnull()
 
-    # Use a forward-fill method to fill the series
+    # Use a forward-fill method to fill the series temporarily
     filled_series = series.copy()
     filled_series.ffill(inplace=True)
 
     # Find the lengths of consecutive missing values
     consecutive_counts = missing_mask.astype(int).groupby((missing_mask != missing_mask.shift()).cumsum()).transform('sum')
 
-    # Only retain the sections where consecutive missing values are less than the limit
-    for start, count in consecutive_counts.iteritems():
-        if count > max_consecutive_missing:
-            # If the count of consecutive NaNs is greater than the limit, revert the fill
-            filled_series[start:start + count] = series[start:start + count]
+    # Create a boolean mask for sections that need to be reverted
+    revert_mask = consecutive_counts > max_consecutive_missing
+
+    # Revert the fill for those sections
+    for index in series.index:
+        if revert_mask[index]:
+            # Calculate the range of indices to revert
+            start_index = index
+            count = consecutive_counts[index]
+            filled_series[start_index:start_index + count] = series[start_index:start_index + count]
 
     return filled_series
-
-
-
-
 
 
 color = (255, 255, 0)
 # face_detector = dlib.get_frontal_face_detector()
 
-def update_frame(xcoord, ycoord, frame, timestamp, aois):
+def update_frame(xcoord, ycoord, frame, timestamp):
     text = "away"
     frame = cv2.resize(frame, (960,540))
     if xcoord >= 0 and xcoord <= 960:
             text = "looking"   
+            print( xcoord, ycoord)
             if ycoord < 0: ycoord = 0
             if ycoord > 540: ycoord = 540 
-            cv2.circle(frame, (xcoord+960, ycoord), 15, color, 2)  
+            cv2.circle(frame, (int(xcoord), int(ycoord)), 15, color, 2)  
 
 
 
         
     cv2.putText(frame, text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
     cv2.putText(frame, str(round(timestamp,0)), (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
+    return frame
 
 
 def process_subject(videofile, task_file, csv_file, aoi_file):
@@ -57,6 +60,7 @@ def process_subject(videofile, task_file, csv_file, aoi_file):
         """
     
         # Step 1: Read the CSV file
+        print('csv file', csv_file)
         df = pd.read_csv(csv_file)
 
         # Now you can proceed with imputing missing values
@@ -91,7 +95,7 @@ def process_subject(videofile, task_file, csv_file, aoi_file):
         
         ret, frame = cap.read()
         height, width, _ = frame.shape
-        resize = (height != 540 or width!=960)
+        resize = False #(height != 540 or width!=960)
         count = 0
 
         while (cap.isOpened()):
@@ -100,6 +104,7 @@ def process_subject(videofile, task_file, csv_file, aoi_file):
             if (ret == False or ret2 == False):  
                 break
             if (frameId % frameval == 0):
+                frame = frame[0:540, 0:960]
                 xcoord = imputed_x[count]
                 ycoord = imputed_y[count]
                 count+=1
@@ -111,9 +116,11 @@ def process_subject(videofile, task_file, csv_file, aoi_file):
                     ret2, frame2 = cap2.read()   
                     if ret2==False: break
                     frame2 = update_frame(xcoord, ycoord, frame2, time)
-                    frame = cv2.hconcat([frame, frame2])
+                    final = cv2.hconcat([frame, frame2])
+                else:
+                    final = frame
                     
-                out.write(frame)
+                out.write(final)
                 
                 cv2.waitKey(1)                         
                     
@@ -180,14 +187,15 @@ def main():
         subDir = args.subject_video        
         os.chdir(subDir)
         videos = glob.glob('*.mp4') + glob.glob('*.mov')
-        videos = [ x for x in videos if "annotated" not in x ]
+        videos = [ x for x in videos if "annotated." in x ]
         videos = [ x for x in videos if "calibration" not in x ]
         videos = [ x for x in videos if "original" not in x ]
         videos = [ x for x in videos if "Calibration" not in x ]
+        print(videos)
 
-    csvFiles = glob.glob('*.mp4') + glob.glob('*.mov')
-    csvFiles = [ x for x in csvFiles if "calibration" in x or "Calibration" in x ]
-
+    csvFiles = glob.glob('*.csv') 
+    csvFiles = [ x for x in csvFiles if "calibration" not in x]
+    print(csvFiles)
 
     for subVideo in videos:
         
@@ -217,16 +225,18 @@ def main():
         subVideo = os.path.basename(subVideo)
         subname , ext = os.path.splitext(subVideo)
         subname = str(subname).lower()
-
-        csvFiles_tmp = [ x for x in csvFiles if str(subname) in x ]
-        csvFiles_tmp = [ x for x in csvFiles_tmp if "calibration" not in x ]
+        subname = str(subname).replace('_annotated', '')
+        print(subname)
+        
 
         if taskName != "":
-            csvFiles_tmp = [ x for x in csvFiles_tmp if taskName in x ]
-            taskName = "_" + taskName
-            subname = str(subname).replace(taskName, '')
-            print(subname)
-
+            taskName2 = "_" + taskName
+            subname = str(subname).replace(taskName2, '')
+            print(taskName, subname)
+        csvFiles_tmp = [ x for x in csvFiles if str(subname).lower() in x.lower()]
+        print(csvFiles_tmp)
+        csvFiles_tmp = [ x for x in csvFiles_tmp if taskName.lower() in x.lower()]
+        print(csvFiles_tmp)
         if taskVideo is not None and len(taskVideo) == 1:
             taskVideo = os.path.abspath(os.path.join(expDir, taskVideo[0]))
         csvFile = os.path.abspath(os.path.join(subDir, csvFiles_tmp[0]))   
