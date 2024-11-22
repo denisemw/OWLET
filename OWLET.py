@@ -14,7 +14,7 @@ from eyetracker import run_owlet
 import os
 from pathlib import Path
 import glob
-
+from datetime import datetime
 
 def videofile(value):
     return value
@@ -156,10 +156,10 @@ def main():
                         file.close()
                         exit()
         
-            
+            print(datetime.now())
             df = owlet.process_subject(cwd, subVideo, subDir, show_output, taskVideo, False)
             owlet.format_output(subVideo, taskVideo, subDir, expDir, df, aois, stim_df)
-    
+            print(datetime.now())
     
 if __name__ == '__main__':
     main()
