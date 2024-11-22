@@ -7,10 +7,10 @@ Created on Mon Aug 22 18:57:55 2022
 """
 import sys
 sys.path.append("eyetracker")
-import OWLET_GUI
+from eyetracker import OWLET_GUI
 import os
 import argparse
-import run_owlet
+from eyetracker import run_owlet
 import os
 from pathlib import Path
 import glob
@@ -114,7 +114,7 @@ def main():
                 subname = str(subname).replace(taskName, '')
                 print(subname)
         
-            calibVideos_tmp = [ x for x in calibVideos if str(subname) in x ]
+            calibVideos_tmp = [ x for x in calibVideos if str(subname) in x.lower() ]
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
             print(calibVideo)
         
