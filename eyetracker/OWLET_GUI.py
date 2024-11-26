@@ -14,7 +14,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 import os
 import tkinter.font as font
-from run_owlet import OWLET
+from .run_owlet import OWLET
 from pathlib import Path
 import webbrowser
 import glob

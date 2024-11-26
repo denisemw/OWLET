@@ -5,7 +5,7 @@ Assumptions: this code only works when the mom is higher than the baby
 """
 
 import cv2
-from gaze_tracking import GazeTracking
+from .gaze_tracking import GazeTracking
 import numpy as np
 import math
 
@@ -61,7 +61,7 @@ class LookingCalibration(object):
                 
                 eyearea = self.gaze.get_eye_area()
                 eyeratio = self.gaze.get_eye_area_ratio()
-                
+                eye_distance = self.gaze.get_eye_distance()
                 if eyearea is not None:
                     self.areas.append(eyearea)
                     
@@ -74,19 +74,21 @@ class LookingCalibration(object):
                     self.blinks.append(blink)
 
                 if (hor_look is not None and not self.gaze.is_blinking()):
-                    if eyeratio is not None and (eyeratio > .77 and eyeratio < 1.3):
+                    if eyeratio is not None and (eyeratio > .7 and eyeratio < 1.3) \
+                    and eye_distance is not None and (eye_distance > .7 and eye_distance < 1.3):
                         self.hor_ratios.append(hor_look)
                         self.hor_ratios2.append(hor_look2)
                     # print("hor look: " + str(hor_look))
                 if (ver_look is not None and not self.gaze.is_blinking()):
-                    if eyeratio is not None and (eyeratio > .77 and eyeratio < 1.3):
+                    if eyeratio is not None and (eyeratio > .7 and eyeratio < 1.3) \
+                    and eye_distance is not None and (eye_distance > .7 and eye_distance < 1.3):
                         self.ver_ratios.append(ver_look)
                         self.ver_ratios_left.append(ver_look_left)
                         self.ver_ratios_right.append(ver_look_right)
                     
-                if self.show_output:
-                    cv2.putText(frame, "Calibrating...", (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 0), 1)
-                    cv2.imshow("Calibration", frame)
+                # if self.show_output:
+                #     # cv2.putText(frame, "Calibrating...", (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, (255, 255, 0), 1)
+                #     cv2.imshow("Calibration", frame)
             if cv2.waitKey(1) == 27:
                 break
         cap3.release()

@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import cv2
-from pupil import Pupil
+from .pupil import Pupil
 
 
 class Eye(object):
@@ -29,7 +29,8 @@ class Eye(object):
         self.max_y = None
         self.region = None
         self.point = pupilpoint
-
+        self.top=None
+        self.bottom=None
         self._analyze(original_frame, landmarks, side)
 
 
@@ -106,7 +107,14 @@ class Eye(object):
                 a = math.dist( (landmarks.part(38).x, landmarks.part(38).y), (landmarks.part(40).x, landmarks.part(40).y))
                 b = math.dist( (landmarks.part(37).x, landmarks.part(37).y), (landmarks.part(41).x, landmarks.part(41).y))
                 ratio = (2.0 * self.width) / (a + b)
+                topx = (landmarks.part(37).x + landmarks.part(38).x) / 2
+                topy = (landmarks.part(37).y + landmarks.part(38).y) / 2
+                bottomx = (landmarks.part(41).x + landmarks.part(40).x) / 2
+                bottomy = (landmarks.part(41).y + landmarks.part(40).y) / 2
                 self.height = (a+b)/2
+                self.top = (int(topx), int(topy))
+                self.bottom = (int(bottomx), int(bottomy))
+
                 self.inner_y = landmarks.part(39).y
                 self.inner_x = landmarks.part(39).x
                 
@@ -115,7 +123,13 @@ class Eye(object):
                 a = math.dist( (landmarks.part(43).x, landmarks.part(43).y), (landmarks.part(47).x, landmarks.part(47).y))
                 b = math.dist( (landmarks.part(44).x, landmarks.part(44).y), (landmarks.part(46).x, landmarks.part(46).y))
                 ratio = (2.0 * self.width) / (a + b)
+                topx = (landmarks.part(43).x + landmarks.part(44).x) / 2
+                topy = (landmarks.part(43).y + landmarks.part(44).y) / 2
+                bottomx = (landmarks.part(46).x + landmarks.part(47).x) / 2
+                bottomy = (landmarks.part(46).y + landmarks.part(47).y) / 2
                 self.height = (a+b)/2
+                self.top = (int(topx), int(topy))
+                self.bottom = (int(bottomx), int(bottomy))
                 self.inner_y = landmarks.part(42).y
                 self.inner_x = landmarks.part(42).x
 
