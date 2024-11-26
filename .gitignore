@@ -1,0 +1,13 @@
+
+resampy/interpn.py
+/resampy
+/llvmlite
+/libsndfile
+*.pyc
+*.dylib
+/build
+/dist
+/_soundfile_data
+/soundfile
+.DS_Store
+.DS_Store
