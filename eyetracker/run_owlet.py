@@ -740,15 +740,23 @@ class OWLET(object):
                     df.loc[i, "Tag"] = "Right"
         
         if stim_df is not None:
-            row_marker = 0
-
+            print()
             for i in range(len(df)):
-                if row_marker >= len(stim_df):
+                if i >= len(df):
                     break
-                cur_time = stim_df.loc[row_marker, "Time"] + self.start
-                cur_label = stim_df.loc[row_marker, "Label"]
-                if df.loc[i, "Time"] >= cur_time:
-                    df.loc[i, "Trial"] = cur_label
-                    row_marker += 1                        
+
+                cur_time = df.loc[i, "Time"]
+
+                cur_label = pd.NaT
+                for x in range(len(stim_df)):
+                    if x < len(stim_df) - 1:
+                        if cur_time >= stim_df.loc[x, "Time"] and cur_time < stim_df.loc[x+1, "Time"]:
+                            cur_label = stim_df.loc[x, "Label"]
+                    elif x == len(stim_df) - 1:
+                        if cur_time >= stim_df.loc[x, "Time"]:
+                            cur_label = stim_df.loc[x, "Label"]
+
+                
+                df.loc[i, "Trial"] = cur_label     
         csv_file =str(sub) + taskname + ".csv"
         df.to_csv(csv_file, index = False)

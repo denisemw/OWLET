@@ -90,7 +90,8 @@ def main():
                 
                 
                 aois = glob.glob('*AOIs.csv')
-                stim_file = glob.glob('*trials*csv')
+                stim_file = glob.glob('*trials.csv')
+                print(stim_file)
                 if len(taskVideo) != 1: 
                     taskVideo = None
                 else: 
@@ -100,7 +101,8 @@ def main():
                     aois = ""
                 else: 
                     aois = aois[0]
-                if len(stim_file) != 0: stim_file = None
+                if len(stim_file) != 1: 
+                    stim_file = None
                 
             os.chdir(subDir)
             subVideo = os.path.basename(subVideo)
@@ -120,8 +122,6 @@ def main():
         
             if args.display_output:
                 show_output = True
-                
-                
           
             if taskVideo is not None:
                 experiment_name = os.path.basename(os.path.normpath(expDir))
@@ -130,14 +130,15 @@ def main():
                 file_name =  str(subDir) + '/' + str(subname) + "_error_log" + ".txt"
                 
             if stim_file is not None and len(stim_file) == 1:
-                success, stim_df = owlet.read_stim_markers(os.path.join(expDir, stim_file[0]))
-                
+                success, stim_df = owlet.read_stim_markers(stim_file = os.path.join(expDir, stim_file[0]))
+            else:
+                success = False
                 if not success:
                     print("Trial markers file must have 'Time' and 'Label' columns.")
                     file = open(file_name, "w")
                     file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
                     file.close()
-                    raise AssertionError
+                    #raise AssertionError - commented this out because it wasn't letting us process PA 
             
             if calibVideo is not None and len(calibVideo) == 1:
                 calibVideo = os.path.abspath(os.path.join(subDir, calibVideo[0]))
