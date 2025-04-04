@@ -24,7 +24,7 @@ class GazeTrackingCNN(object):
         self.faces = []
         # _face_detector is used to detect faces
         self._face_detector = dlib.get_frontal_face_detector()
-        cnn_model_path = "/users/werchd01/downloads/mmod_human_face_detector.dat"
+        cnn_model_path = "eyetracker/mmod_human_face_detector.dat"
         self._face_detector = dlib.cnn_face_detection_model_v1(cnn_model_path)
         self.eye_scale = mean
         self.blink_thresh = maximum * 1.1
@@ -40,7 +40,7 @@ class GazeTrackingCNN(object):
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
-        self._predictor = dlib.shape_predictor("/users/werchd01/downloads/shape_predictor_68_face_landmarks_GTX.dat")
+        self._predictor = dlib.shape_predictor("eyetracker/shape_predictor_68_face_landmarks_GTX.dat")
         self.top, self.bottom, self.left, self.right = 0, 540, 0, 960
         # self._predictor = dlib.shape_predictor(model_path)
         # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
