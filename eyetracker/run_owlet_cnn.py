@@ -16,11 +16,12 @@ import os
 import sys
 from io import StringIO 
 from csv import writer 
-from .gaze_tracking import GazeTracking
+from .gaze_tracking_cnn import GazeTrackingCNN
 from .calibration import LookingCalibration
 from pathlib import Path
+from collections import deque
 
-class OWLET(object):
+class OWLET_CNN(object):
     
     def __init__(self):
         """Returns the frame with pupils highlighted"""
@@ -137,13 +138,14 @@ class OWLET(object):
         the x/y scale values for the polynomial transfer function, and the
         initial gaze/pupil locations
         """
-        self.gaze = GazeTracking(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
+        self.gaze = GazeTrackingCNN(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
             self.threshold = .1/6 
         if self.range_yvals < .1:
             self.threshold = .1/6  
-        self.x_scale_value = 960/(self.range_xvals * .9)
+        self.x_scale_value = 960/(self.range_xvals * .8)
+        self.x_scale_value2 = 960/(self.range_xvals2 * .8)
         self.y_scale_value = 540/(self.range_yvals * .8)
         self.y_scale_value_left = 540/(self.range_yvals_left * .8)
         self.y_scale_value_right = 540/(self.range_yvals_right * .8)
@@ -170,13 +172,13 @@ class OWLET(object):
             the average x and y gaze point
         """
         xval, yval = x, y
-        if len(gazelist1) > 5:
-            xval = sum(gazelist1[-6:])/6
-            if len(gazelist2) > 5:
-                yval = sum(gazelist2[-6:] )/6
-            else:
-                yval = sum(gazelist2)/len(gazelist2)
-        elif len(gazelist1) > 0:
+        # if len(gazelist1) > 3:
+        #     xval = sum(gazelist1[-4:])/4
+        #     if len(gazelist2) > 3:
+        #         yval = sum(gazelist2[-4:] )/4
+        #     else:
+        #         yval = sum(gazelist2)/len(gazelist2)
+        if len(gazelist1) > 0:
             xval = sum(gazelist1)/len(gazelist1)
             yval = sum(gazelist2)/len(gazelist2)
         return xval, yval
@@ -258,13 +260,13 @@ class OWLET(object):
    
     def initialize_cur_gaze_list(self):
         """Initializes lists for the current gaze positions"""
-        self.cur_fix_hor = []
-        self.cur_fix_hor_scaled = []
-        self.cur_fix_ver = []
-        self.cur_fix_xleft = []
-        self.cur_fix_xright = []
-        self.cur_fix_ver_left = []
-        self.cur_fix_ver_right = []
+        self.cur_fix_hor = deque(maxlen=6)
+        # self.cur_fix_hor_scaled = deque(maxlen=6)
+        self.cur_fix_ver = deque(maxlen=6)
+        self.cur_fix_xleft = deque(maxlen=6)
+        self.cur_fix_xright = deque(maxlen=6)
+        # self.cur_fix_ver_left = deque(maxlen=6)
+        # self.cur_fix_ver_right = deque(maxlen=6)
         
     def initialize_potential_gaze_list(self):
         """Initializes the potential gaze positions to None"""
@@ -275,7 +277,7 @@ class OWLET(object):
         self.potential_ver_left= None 
         self.potential_ver_right = None 
         
-    def append_cur_gaze_list(self, hor, hor_scaled, ver, xleft, xright, yleft, yright):
+    def append_cur_gaze_list(self, hor, ver, xleft, xright):
         """
         Appends the current gaze positions to the lists for the current gaze positions
         
@@ -289,14 +291,14 @@ class OWLET(object):
             yright (float): The right y gaze position
         """
         self.cur_fix_hor.append(hor)
-        self.cur_fix_hor_scaled.append(hor_scaled)
+        # self.cur_fix_hor_scaled.append(hor_scaled)
         self.cur_fix_ver.append(ver)
         self.cur_fix_xleft.append(xleft)
         self.cur_fix_xright.append(xright)
-        self.cur_fix_ver_left.append(yleft)
-        self.cur_fix_ver_right.append(yright)
+        # self.cur_fix_ver_left.append(yleft)
+        # self.cur_fix_ver_right.append(yright)
         
-    def append_potential_gaze_list(self, hor, hor_scaled, left, right, yleft, yright):
+    def append_potential_gaze_list(self, hor, left, right):
         """
         Sets the potential gaze positions to the values given
         
@@ -309,11 +311,11 @@ class OWLET(object):
             yright (float): The right y gaze position
         """
         self.potential_hor = (hor)
-        self.potential_hor_scaled = (hor_scaled)
+        # self.potential_hor_scaled = (hor_scaled)
         self.potential_fix_xleft = (left)
         self.potential_fix_xright = (right)
-        self.potential_ver_left = (yleft)
-        self.potential_ver_right = (yright)
+        # self.potential_ver_left = (yleft)
+        # self.potential_ver_right = (yright)
 
         
     def determine_gaze(self, frame):
@@ -331,63 +333,78 @@ class OWLET(object):
         
         # this is getting the average gaze point of the last X number of trials, which we use to check for saccades
         self.prior_x, self.prior_y = self.get_gazepoint(self.cur_fix_hor, self.cur_fix_ver, self.prior_x, self.prior_y)
-        self.prior_x_scaled, self.prior_y = self.get_gazepoint(self.cur_fix_hor_scaled, self.cur_fix_ver, self.prior_x_scaled, self.prior_y)
-        self.prior_y_left, self.prior_y_right = self.get_gazepoint(self.cur_fix_ver_left, self.cur_fix_ver_right, self.prior_y_left, self.prior_y_right)
+        # self.prior_x_scaled, self.prior_y = self.get_gazepoint(self.cur_fix_hor_scaled, self.cur_fix_ver, self.prior_x_scaled, self.prior_y)
+        # self.prior_y_left, self.prior_y_right = self.get_gazepoint(self.cur_fix_ver_left, self.cur_fix_ver_right, self.prior_y_left, self.prior_y_right)
         self.prior_xleft, self.prior_xright = self.get_gazepoint(self.cur_fix_xleft, self.cur_fix_xright, self.prior_xleft, self.prior_xright)
         
         # gets the horizontal gaze position scaled by eye area
         cur_x_left, cur_x_right = self.gaze.horizontal_gaze()
-        curx2_original = self.gaze.horizontal_gaze_scaled()
-        curx2 = curx2_original
+        # curx2 = self.gaze.horizontal_gaze_scaled()
+        # curx2 = curx2_original
         
-        tmplist = self.cur_fix_hor_scaled.copy()     
+        # tmplist = self.cur_fix_hor_scaled.copy()     
         
-        if curx2_original is not None:
-            tmplist.append(curx2_original)
+        # if curx2_original is not None:
+        #     tmplist.append(curx2_original)
 
-        if len(tmplist) > 1:
-            curx2 = sum(tmplist[-2:] )/2
+        # if len(tmplist) > 1:
+        #     curx2 = sum(tmplist[-2:] )/2
                             
         # gets the current, non-smoothed horizontal and vertical gaze positions
         cur_x, cur_y, cur_y_left, cur_y_right = self.gaze.xy_gaze_position()
         area_ratio = self.gaze.get_eye_area_ratio()  
         self.text = "looking"
-        
-        if cur_y is not None and len(self.cur_fix_ver) > 0:
-            tmplist2 = self.cur_fix_ver.copy()
-            tmplist3 = self.cur_fix_ver_left.copy()
-            tmplist4 = self.cur_fix_ver_right.copy()
-            tmplist2.append(cur_y)
-            tmplist3.append(cur_y_left)
-            tmplist4.append(cur_y_right)
-            if len(tmplist2) > 3:
-                cur_y = sum(tmplist2[-4:] )/4
-                cur_y_left = sum(tmplist3[-4:] )/4
-                cur_y_right = sum(tmplist4[-4:] )/4
-            elif len(tmplist2) > 0:
-                cur_y = sum(tmplist2)/len(tmplist2)
-                cur_y_left = sum(tmplist3)/len(tmplist3)
-                cur_y_right = sum(tmplist4)/len(tmplist4)
+        # print(cur_x, curx2)
+        # if cur_y is not None and len(self.cur_fix_ver) > 0:
+        #     tmplist2 = self.cur_fix_ver.copy()
+        #     tmplist3 = self.cur_fix_ver_left.copy()
+        #     tmplist4 = self.cur_fix_ver_right.copy()
+        #     tmplist2.append(cur_y)
+        #     tmplist3.append(cur_y_left)
+        #     tmplist4.append(cur_y_right)
+        #     if len(tmplist2) > 3:
+        #         cur_y = sum(tmplist2[-4:] )/4
+        #         cur_y_left = sum(tmplist3[-4:] )/4
+        #         cur_y_right = sum(tmplist4[-4:] )/4
+        #     elif len(tmplist2) > 0:
+        #         cur_y = sum(tmplist2)/len(tmplist2)
+        #         cur_y_left = sum(tmplist3)/len(tmplist3)
+        #         cur_y_right = sum(tmplist4)/len(tmplist4)
     
         self.is_looking = True
+
+        eye_distance = self.gaze.get_eye_distance()
+        nose_distance = self.gaze.get_nose_distance()
         
-        # head is so far turned that baby is not looking at screen
-        if area_ratio is not None and (area_ratio < .5 or area_ratio > 1.5):
+                # head is so far turned that baby is not looking at screen
+        if eye_distance is not None and (eye_distance < .5 or eye_distance > 1.5):
             self.is_looking = False
             self.num_looks_away += 1
+            # self.text = 'away'
+
+        # elif nose_distance is not None and (nose_distance < .26 or nose_distance > .36):
+        #     self.is_looking = False
+        #     self.num_looks_away += 1
+            # self.text = 'away'
+        # head is so far turned that baby is not looking at screen
+        elif area_ratio is not None and (area_ratio < .7 or area_ratio > 1.3):
+            self.is_looking = False
+            self.num_looks_away += 1
+            # self.text='away'
 
         elif self.gaze.pupils_located == False or self.gaze.is_blinking():
             self.is_looking = False
             self.num_looks_away += 1
             
-        # check if not looking at the screen
-        elif curx2 < (self.min_xval2 - self.range_xvals2/1) or curx2 > (self.max_xval2 + self.range_xvals2/1):
-            self.is_looking = False
-            self.num_looks_away = 3
+        # # check if not looking at the screen
+        # elif curx2 < (self.min_xval2 - self.range_xvals2/1) or curx2 > (self.max_xval2 + self.range_xvals2/1):
+        #     self.is_looking = False
+        #     self.num_looks_away = 3
             
         # check for horizontal saccade   
         elif (cur_x >= (self.min_xval - self.range_xvals/2) and cur_x <= (self.max_xval + self.range_xvals/2) ) and \
         (self.prior_x is not None) and (abs(cur_x - self.prior_x) >= self.threshold): 
+            
             self.num_looks_away = 0  
             val = self.threshold/2
             diff_left = abs(cur_x_left - self.prior_xleft)
@@ -395,40 +412,45 @@ class OWLET(object):
             # one eye jumped largely, so isn't a real saccade
             if diff_left < val or diff_right < val or diff_left/diff_right < .4 or diff_left/diff_right > 2.5:# or \
             # (diff_left2 > 0 and diff_right2 < 0) or (diff_left2 < 0 and diff_right2 > 0): # or \
-                self.append_cur_gaze_list(self.prior_x, self.prior_x_scaled, self.prior_y, self.prior_xleft, self.prior_xright, self.prior_y_left, self.prior_y_right)
-                self.initialize_potential_gaze_list()
-
-            elif self.potential_hor is not None:
-                # if n-1 gaze is closer to current gaze than n-2 gaze,
-                # then set the current gaze lists to the potential lists
-                if abs(cur_x - self.potential_hor) <  abs(cur_x - self.prior_x):
-                    self.cur_fix_hor = [self.potential_hor]
-                    self.cur_fix_ver_left = [self.potential_ver_left]
-                    self.cur_fix_ver_right = [self.potential_ver_right]
-                    self.cur_fix_hor_scaled = [self.potential_hor_scaled]
-                    self.cur_fix_xleft = [self.potential_fix_xleft]
-                    self.cur_fix_xright = [self.potential_fix_xright]
-
-                    self.text = "saccade"
-                self.append_cur_gaze_list(cur_x, curx2, cur_y, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
+                self.append_cur_gaze_list(self.prior_x, self.prior_y, self.prior_xleft, self.prior_xright)
                 self.initialize_potential_gaze_list()
             else:
-                self.append_potential_gaze_list(cur_x, curx2, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
-                self.append_cur_gaze_list(self.prior_x, self.prior_x_scaled, self.prior_y, self.prior_xleft, self.prior_xright, self.prior_y_left, self.prior_y_right)
+                self.append_cur_gaze_list(cur_x, cur_y, cur_x_left, cur_x_right)
+
+            # elif self.potential_hor is not None:
+            #     # if n-1 gaze is closer to current gaze than n-2 gaze,
+            #     # then set the current gaze lists to the potential lists
+            #     if abs(cur_x - self.potential_hor) <  abs(cur_x - self.prior_x):
+            #         self.cur_fix_hor = [self.potential_hor]
+            #         self.cur_fix_ver_left = [self.potential_ver_left]
+            #         self.cur_fix_ver_right = [self.potential_ver_right]
+            #         self.cur_fix_hor_scaled = [self.potential_hor_scaled]
+            #         self.cur_fix_xleft = [self.potential_fix_xleft]
+            #         self.cur_fix_xright = [self.potential_fix_xright]
+
+            #         self.text = "saccade"
+            #     self.append_cur_gaze_list(cur_x, curx2, cur_y, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
+            #     self.initialize_potential_gaze_list()
+            # else:
+            #     self.append_potential_gaze_list(cur_x, curx2, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
+            #     self.append_cur_gaze_list(self.prior_x, self.prior_x_scaled, self.prior_y, self.prior_xleft, self.prior_xright, self.prior_y_left, self.prior_y_right)
                 
         # check for horizontal saccade with scaled gaze
-        elif (self.prior_x_scaled is not None) and (abs(curx2 - self.prior_x_scaled) >= (self.range_xvals2/4)): 
-            self.num_looks_away = 0  
-            self.cur_fix_hor = [cur_x]
-            self.cur_fix_ver = [cur_y]
-            self.cur_fix_ver_left = [cur_y_left]
-            self.cur_fix_ver_right = [cur_y_right]
-            self.cur_fix_hor_scaled = [curx2]
-            self.cur_fix_xleft = [cur_x_left]
-            self.cur_fix_xright = [cur_x_right]
-            self.initialize_potential_gaze_list()
+        # elif (self.prior_x_scaled is not None) and (abs(curx2 - self.prior_x_scaled) >= (self.range_xvals2/4)): 
+        #     print("here")
+        #     self.num_looks_away = 0  
+        #     self.cur_fix_hor = [cur_x]
+        #     self.cur_fix_ver = [cur_y]
+        #     self.cur_fix_ver_left = [cur_y_left]
+        #     self.cur_fix_ver_right = [cur_y_right]
+        #     self.cur_fix_hor_scaled = [curx2]
+        #     self.cur_fix_xleft = [cur_x_left]
+        #     self.cur_fix_xright = [cur_x_right]
+        #     self.initialize_potential_gaze_list()
+            
         else:
-            self.append_cur_gaze_list(cur_x, curx2, cur_y, cur_x_left, cur_x_right, cur_y_left, cur_y_right)
+            self.append_cur_gaze_list(cur_x, cur_y, cur_x_left, cur_x_right)
+            
             
             # uncomment if left/right gaze is desired for VPC or Listening while Looking tasks
             # if curx2_original > (self.middle_x2 + self.range_xvals2/4) or (cur_x > (self.middle_x + self.range_xvals)/4):
@@ -441,9 +463,9 @@ class OWLET(object):
             
         if self.haslooked == False and cur_x is not None:
             self.haslooked = True
-        self.prior_x, self.prior_x_scaled, self.prior_y = cur_x, curx2_original, cur_y  
+        self.prior_x, self.prior_y = cur_x, cur_y  
         self.prior_xleft, self.prior_xright = cur_x_left, cur_x_right
-        self.prior_y_left, self.prior_y_right = cur_y_left, cur_y_right
+        # self.prior_y_left, self.prior_y_right = cur_y_left, cur_y_right
         
         return frame
 
@@ -471,18 +493,20 @@ class OWLET(object):
         """
         color = (255, 255, 0)
         xcoord, ycoord = None, None
-        cur_y_left, cur_y_right = self.get_gazepoint(self.cur_fix_ver_left, self.cur_fix_ver_right, self.prior_y_left, self.prior_y_right)
+        # cur_y_left, cur_y_right = self.get_gazepoint(self.cur_fix_ver_left, self.cur_fix_ver_right, self.prior_y_left, self.prior_y_right)
         cur_x, cur_y = self.get_gazepoint(self.cur_fix_hor, self.cur_fix_ver, self.prior_x, self.prior_y)
-        
+        # cur_x2, cur_y = self.get_gazepoint(self.cur_fix_hor_scaled, self.cur_fix_ver, self.prior_x_scaled, self.prior_y)
+
         # if the baby has looked, get the current gaze point and put it on the frame
         if self.haslooked == True and (self.is_looking == True or self.num_looks_away < 3):
-            xcoord = abs(int((cur_x - self.min_xval) * self.x_scale_value) - 960 )
-            ycoord_left = abs(int((cur_y_left - self.min_yval_left) * self.y_scale_value_left) -540 ) 
-            ycoord_right = abs(int((cur_y_right - self.min_yval_right) * self.y_scale_value_right) -540 ) 
-            ycoord = int((ycoord_left + ycoord_right)/2)
-            
+            xcoord = abs(int((cur_x - self.min_xval) * self.x_scale_value) - 940 )
+            # xcoord2 = abs(int((cur_x2 - self.min_xval2) * self.x_scale_value2) - 940 )
+            # ycoord_left = abs(int((cur_y_left - self.min_yval_left) * self.y_scale_value_left) -530 ) 
+            # ycoord_right = abs(int((cur_y_right - self.min_yval_right) * self.y_scale_value_right) -530 ) 
+            # ycoord = int((ycoord_left + ycoord_right)/2)
+            ycoord = abs(int((cur_y - self.min_yval) * self.y_scale_value) -530 ) 
             if ycoord < 0 or ycoord > 540:
-                ycoord = abs(int((self.middle_y - self.min_yval) * self.y_scale_value) -540 ) 
+                ycoord = abs(int((self.middle_y - self.min_yval) * self.y_scale_value) -530 ) 
             if xcoord < 0 or xcoord > 960:
                 self.text = "away"
             if self.text == "saccade":
@@ -494,6 +518,7 @@ class OWLET(object):
 
             if frame.shape[1] == 1920:
                 cv2.circle(frame, (xcoord+960, ycoord), 15, color, 2)  
+                # cv2.circle(frame, (xcoord2+960, ycoord), 15, (255,0,255), 2)  
         else:
             # if gaze is lost for 100ms or more, reset current and potential lists
             if self.num_looks_away > 2:
@@ -507,6 +532,13 @@ class OWLET(object):
         
         cv2.putText(frame, self.text, (20, 60), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
         cv2.putText(frame, str(round(timestamp,0)), (20, 30), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
+        # area_ratio = self.gaze.get_eye_area_ratio()  
+        # eye_distance = self.gaze.get_eye_distance()
+        # nose_distance = self.gaze.get_nose_distance()
+        # cv2.putText(frame, str(round(area_ratio,2)), (20, 90), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
+        # cv2.putText(frame, str(round(eye_distance,2)), (20, 120), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
+        # cv2.putText(frame, str(round(nose_distance,2)), (20, 150), cv2.FONT_HERSHEY_DUPLEX, 0.9, color, 1)
+
         return frame, xcoord, ycoord, self.text
 
 
@@ -676,10 +708,15 @@ class OWLET(object):
                     
                     draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
                     frame = self.determine_gaze(frame)
+                    eyecoords = self.gaze.get_landmarks()
+                    # if self.text != 'away':
+                    #     for point in eyecoords:
+                    #         cv2.circle(frame, point, 3, (0, 255, 0), 1)
                     
                     if draw_pupils: 
                         cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
                         cv2.circle(frame, right_coords, 3, (255, 255, 0), 1)  
+                        cv2.rectangle(frame,(self.gaze.left,self.gaze.top),(self.gaze.right,self.gaze.bottom),(0,255,0),2)
                     
                     # concat frames
                     if task_file is not None:
@@ -725,38 +762,43 @@ class OWLET(object):
             
         if aoi_file != "":
             aois =  pd.read_csv(os.path.abspath(os.path.join(expDir, aoi_file)))
-            for i in range(len(df)): 
-                for j in range(len(aois)):
-                    if df.loc[i, "X-coord"] in range(aois.loc[j, 'X1'],aois.loc[j, 'X2']) \
-                        and df.loc[i, "Y-coord"] in range(aois.loc[j, 'Y1'],aois.loc[j, 'Y2']):
-                        df.loc[i, "Tag"] = aois.loc[j, 'AOI']
-                        break
+            df["Tag"] = None
+            # Use a vectorized operation
+            for _, aoi in aois.iterrows():
+                mask = (
+                    (df["X-coord"] >= aoi["X1"]) & (df["X-coord"] < aoi["X2"]) &
+                    (df["Y-coord"] >= aoi["Y1"]) & (df["Y-coord"] < aoi["Y2"])
+                )
+                df.loc[mask, "Tag"] = aoi["AOI"]
+
+            # for i in range(len(df)): 
+            #     for j in range(len(aois)):
+            #         if df.loc[i, "X-coord"] in range(aois.loc[j, 'X1'],aois.loc[j, 'X2']) \
+            #             and df.loc[i, "Y-coord"] in range(aois.loc[j, 'Y1'],aois.loc[j, 'Y2']):
+            #             df.loc[i, "Tag"] = aois.loc[j, 'AOI']
+            #             break
    
         else:
-            for i in range(len(df)):
-                if df.loc[i, "X-coord"] in range(0,480):
-                    df.loc[i, "Tag"] = "Left"
-                elif df.loc[i, "X-coord"] in range(480,960):
-                    df.loc[i, "Tag"] = "Right"
+            df["Tag"] = None  # Initialize column
+            df.loc[df["X-coord"] < 480, "Tag"] = "Left"
+            df.loc[(df["X-coord"] >= 480) & (df["X-coord"] < 960), "Tag"] = "Right"
+
+            # for i in range(len(df)):
+            #     if df.loc[i, "X-coord"] in range(0,480):
+            #         df.loc[i, "Tag"] = "Left"
+            #     elif df.loc[i, "X-coord"] in range(480,960):
+            #         df.loc[i, "Tag"] = "Right"
         
         if stim_df is not None:
-            print()
+            row_marker = 0
+
             for i in range(len(df)):
-                if i >= len(df):
+                if row_marker >= len(stim_df):
                     break
-
-                cur_time = df.loc[i, "Time"]
-
-                cur_label = pd.NaT
-                for x in range(len(stim_df)):
-                    if x < len(stim_df) - 1:
-                        if cur_time >= stim_df.loc[x, "Time"] and cur_time < stim_df.loc[x+1, "Time"]:
-                            cur_label = stim_df.loc[x, "Label"]
-                    elif x == len(stim_df) - 1:
-                        if cur_time >= stim_df.loc[x, "Time"]:
-                            cur_label = stim_df.loc[x, "Label"]
-
-                
-                df.loc[i, "Trial"] = cur_label     
+                cur_time = stim_df.loc[row_marker, "Time"] + self.start
+                cur_label = stim_df.loc[row_marker, "Label"]
+                if df.loc[i, "Time"] >= cur_time:
+                    df.loc[i, "Trial"] = cur_label
+                    row_marker += 1                        
         csv_file =str(sub) + taskname + ".csv"
         df.to_csv(csv_file, index = False)

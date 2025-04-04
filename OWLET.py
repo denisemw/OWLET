@@ -7,10 +7,11 @@ Created on Mon Aug 22 18:57:55 2022
 """
 import sys
 sys.path.append("eyetracker")
-import OWLET_GUI
+import eyetracker.OWLET_GUI
 import os
 import argparse
-import run_owlet
+from eyetracker import run_owlet
+from eyetracker import run_owlet_cnn
 import os
 from pathlib import Path
 import glob
@@ -32,6 +33,8 @@ def parse_arguments():
     parser.add_argument('--experiment_info', type=expFolder, help='directory with optional experiment info')
     parser.add_argument('--display_output', action='store_true', help='show annotated video online in a separate window')
     parser.add_argument('--override_audio_matching', action='store_true', help='Manually override audio matching when processing pre-cropped task videos')
+    parser.add_argument('--cnn',  action='store_true', help='Manually override audio matching when processing pre-cropped task videos')
+
     args = parser.parse_args()
     return args
 
@@ -76,10 +79,12 @@ def main():
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
         calibVideos = [ x for x in calibVideos if "calibration" in x or "Calibration" in x ]
-        
+        print(args.cnn)
         for subVideo in videos:
-            
-            owlet = run_owlet.OWLET()
+            if args.cnn: 
+                owlet = run_owlet_cnn.OWLET_CNN()
+                print("cnn")
+            else: owlet = run_owlet.OWLET()
             taskVideo, calibVideo, aois, stim_file, expDir, taskName = None, None, "", None, None, ""
             
             # contains optional experiment info (task video, aois, and stimulus/trial timing info)

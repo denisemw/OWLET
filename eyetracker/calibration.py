@@ -5,7 +5,7 @@ Assumptions: this code only works when the mom is higher than the baby
 """
 
 import cv2
-from gaze_tracking import GazeTracking
+from .gaze_tracking import GazeTracking
 import numpy as np
 import math
 
