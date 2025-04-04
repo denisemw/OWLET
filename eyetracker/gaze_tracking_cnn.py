@@ -2,7 +2,7 @@ from __future__ import division
 import os
 import cv2
 import dlib
-from .eye import Eye
+from .eye_cnn import EyeCNN
 import numpy as np
 # import face_recognition
 
@@ -24,7 +24,7 @@ class GazeTrackingCNN(object):
         self.faces = []
         # _face_detector is used to detect faces
         self._face_detector = dlib.get_frontal_face_detector()
-        cnn_model_path = "eyetracker/mmod_human_face_detector.dat"
+        cnn_model_path = os.path.abspath(os.path.join(cwd, "eyetracker/mmod_human_face_detector.dat"))
         self._face_detector = dlib.cnn_face_detection_model_v1(cnn_model_path)
         self.eye_scale = mean
         self.blink_thresh = maximum * 1.1
@@ -40,7 +40,8 @@ class GazeTrackingCNN(object):
         # _predictor is used to get facial landmarks of a given face
         self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
-        self._predictor = dlib.shape_predictor("eyetracker/shape_predictor_68_face_landmarks_GTX.dat")
+        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks_GTX.dat"))
+        self._predictor = dlib.shape_predictor(model_path)
         self.top, self.bottom, self.left, self.right = 0, 540, 0, 960
         # self._predictor = dlib.shape_predictor(model_path)
         # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
@@ -102,8 +103,8 @@ class GazeTrackingCNN(object):
             # print(self.top, self.bottom, self.left, self.right)
             landmarks = self._predictor(frame, de)
             self.landmarks = landmarks
-            self.eye_left = Eye(frame, landmarks, 0, self.leftpoint)
-            self.eye_right = Eye(frame, landmarks, 1, self.rightpoint)
+            self.eye_left = EyeCNN(frame, landmarks, 0, self.leftpoint)
+            self.eye_right = EyeCNN(frame, landmarks, 1, self.rightpoint)
             self.face = self.faces[self.face_index]
             self.chin = landmarks.part(8).y
             try:
