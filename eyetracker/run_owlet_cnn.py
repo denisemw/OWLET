@@ -52,7 +52,7 @@ class OWLET_CNN(object):
         self.eyearea = -999
 
             
-    def calibrate_gaze(self, calib_file, show_output, cwd):
+    def calibrate_gaze(self, calib_file, show_output):
         """
         Initializes a calibration object and calibrates the extreme scaled
         and unscaled xy gaze positions, the mean/max/min eye blinking ratios, 
@@ -83,7 +83,7 @@ class OWLET_CNN(object):
             self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = df.iloc[0, 22:25]
         
         else:
-            calib = LookingCalibration(show_output, cwd)
+            calib = LookingCalibration(show_output)
             ### FIX THIS ###
             # calib_audio = "/Users/werchd01/Dropbox/ORCA/Calibration.wav" 
             # self.convert_video_to_audio_ffmpeg(sub)
@@ -128,17 +128,16 @@ class OWLET_CNN(object):
             
             
             calib_settings.to_csv(csv_file, index = False)
-            # self.calib_statistics(cwd, calib_file, subDir)
         
 
         
-    def initialize_eye_tracker(self, cwd, width, height):
+    def initialize_eye_tracker(self, width, height):
         """
         Initializes a GazeTracking object, and sets the saccade threshold,
         the x/y scale values for the polynomial transfer function, and the
         initial gaze/pupil locations
         """
-        self.gaze = GazeTrackingCNN(self.mean, self.maximum, self.minimum, self.mean_eyeratio, cwd)
+        self.gaze = GazeTrackingCNN(self.mean, self.maximum, self.minimum, self.mean_eyeratio)
         self.threshold = self.range_xvals/6
         if self.range_xvals < .1:
             self.threshold = .1/6 
@@ -184,19 +183,19 @@ class OWLET_CNN(object):
         return xval, yval
     
     
-    def convert_video_to_audio_ffmpeg(self, video_file, cwd, output_ext="wav"):
+    def convert_video_to_audio_ffmpeg(self, video_file, output_ext="wav"):
         """Converts video to audio directly using `ffmpeg` command
         with the help of subprocess module"""
             
         ff_path = "ffmpeg/ffmpeg"
-        if hasattr(sys, '_MEIPASS'):
-           ffmpeg_path = os.path.join(sys._MEIPASS, ff_path)
-        else:
-           ffmpeg_path = os.path.join(cwd, ff_path)
+        # if hasattr(sys, '_MEIPASS'):
+        #    ffmpeg_path = os.path.join(sys._MEIPASS, ff_path)
+        # else:
+        #    ffmpeg_path = os.path.join(cwd, ff_path)
             
         filename, ext = os.path.splitext(video_file)
         
-        subprocess.call([ffmpeg_path, "-y", "-i", video_file, f"{filename}.{output_ext}"], 
+        subprocess.call([ff_path, "-y", "-i", video_file, f"{filename}.{output_ext}"], 
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.STDOUT)
         
@@ -230,12 +229,12 @@ class OWLET_CNN(object):
 
         return start, end, sub_audio_length, task_audio_length
 
-    def match_audio(self, sub, task, cwd):
+    def match_audio(self, sub, task):
         
         try:
 
-            self.convert_video_to_audio_ffmpeg(sub, cwd)
-            self.convert_video_to_audio_ffmpeg(task, cwd)
+            self.convert_video_to_audio_ffmpeg(sub)
+            self.convert_video_to_audio_ffmpeg(task)
             
             subaudio = sub[0:-4] + ".wav" 
             taskaudio = task[0:-4] + ".wav" 
@@ -557,8 +556,8 @@ class OWLET_CNN(object):
         stim_df.sort_values("Time")
         return True, stim_df
     
-    def calib_statistics(self, cwd, calib_file, subDir):
-        df = self.process_subject(cwd, calib_file, subDir, False, None, True)
+    def calib_statistics(self, calib_file, subDir):
+        df = self.process_subject(calib_file, subDir, False, None, True)
 
         
         Xcoords, pixelsX = [480, 960, 0, 480, 480], [480, 960, 0, 480, 480]           
@@ -614,7 +613,6 @@ class OWLET_CNN(object):
         stats.to_csv(csv_file, index = False)
         
         # img_file = str(subDir) + "/" + str(sub) + ".jpg"
-        # img = cv2.imread(os.path.abspath(os.path.join(cwd, "calibration.jpg")))
         
         # points = [ (480, 270),(860, 270), (100, 270), (480, 465), (480, 75) ]
         # for point in points:
@@ -622,13 +620,12 @@ class OWLET_CNN(object):
         # cv2.imwrite(img_file, img)        
         
 
-    def process_subject(self, cwd, videofile, subDir, show_output, task_file, calib):
+    def process_subject(self, videofile, task_file):
         """Calculates the ratio between the width and height of the eye frame,
         shich can be used to determine whether the eye is closed or open.
         It's the division of the width of the eye, by its height.
 
         Arguments:
-            cwd: the directory where OWLET is running
             videofile: the subject video 
             subDir: the directory of the subject video
             show_output: boolean indicating whether to show output while processing
@@ -639,129 +636,74 @@ class OWLET_CNN(object):
             The computed ratio
         """
     
-
         sub_file, ext = os.path.splitext(videofile)
-        sub = os.path.basename(sub_file)
-        ret2 = True
-        taskname = ""
-        if task_file is not None:
-            taskname = str(os.path.basename(task_file)[0:-4])
-            if taskname in str(sub_file):
-                taskname = ""
-            else:
-                taskname = "_" + taskname
-        
-        outfile = str(sub_file) + taskname + "_annotated.mp4"                
-        cap = cv2.VideoCapture(videofile)   # capturing the baby video from the given path
-        fps = cap.get(5)
+        if os.path.exists(sub_file):
+            sub = os.path.basename(sub_file)
+            ret2 = True
+            
+            outfile = videofile.replace(ext, "_annotated.mp4")     
+            cap = cv2.VideoCapture(videofile)   # capturing the baby video from the given path
+            fps = cap.get(5)
 
-        if fps > 30: fps2 = 30
-        else: fps2  = fps
+            if fps > 30: fps2 = 30
+            else: fps2  = fps
 
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-
-        if task_file is not None:
+            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             cap2 = cv2.VideoCapture(task_file)   # capturing the task video from the given path
             out = cv2.VideoWriter(outfile, fourcc, fps2, (1920, 540))
-        else: 
-            out = cv2.VideoWriter(outfile, fourcc, fps2, (960, 540))
-        
-        frameval = math.ceil(fps) // 30 # downsamples videos to 30 fps
-        if frameval < 1: frameval = 1
-        
-        output = StringIO()
-        csv_writer = writer(output)
-        
-        colnames = ['Subject_ID', 'Time', 'Frame', 'X-coord', 'Y-coord', 'Tag', 'Trial']
-        csv_writer.writerow(colnames)
-
-        self.initialize_eye_tracker(cwd, 960, 540)
-        # if calib:
-        #     self.start = self.calib_starttime
-        #     self.end = self.calib_endtime
-        
-        ret, frame = cap.read()
-        height, width, _ = frame.shape
-        resize = (height != 540 or width!=960)
-        # print(cwd)
-
-        # print(videofile)
-        # print(subDir)
-        # print(task_file)
-        # show_output=True
-        # count = 0
-        while (cap.isOpened()):
+            frameval = math.ceil(fps) // 30 # downsamples videos to 30 fps
+            if frameval < 1: frameval = 1
+            output = StringIO()
+            csv_writer = writer(output)
+            csv_writer.writerow(['Subject_ID', 'Time', 'Frame', 'X-coord', 'Y-coord', 'Tag', 'Trial'])
+            self.initialize_eye_tracker(960, 540)
+            
             ret, frame = cap.read()
-            frameId = cap.get(1) #current frame number
-            if (ret == False or ret2 == False):
-                
-                break
-            if (frameId % frameval == 0):
-                
-                time = cap.get(cv2.CAP_PROP_POS_MSEC)
-                
-                
-                if time >= self.start and time <= self.end:
-                    if resize: frame = cv2.resize(frame, (960,540))  
-                    # count += 1
-                    # print(time)                     
-                    
-                    draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
-                    frame = self.determine_gaze(frame)
-                    eyecoords = self.gaze.get_landmarks()
-                    # if self.text != 'away':
-                    #     for point in eyecoords:
-                    #         cv2.circle(frame, point, 3, (0, 255, 0), 1)
-                    
-                    if draw_pupils: 
-                        cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
-                        cv2.circle(frame, right_coords, 3, (255, 255, 0), 1)  
-                        cv2.rectangle(frame,(self.gaze.left,self.gaze.top),(self.gaze.right,self.gaze.bottom),(0,255,0),2)
-                    
-                    # concat frames
-                    if task_file is not None:
-                        ret2, frame2 = cap2.read()   
-                        if ret2==False: break
-                        frame2 = cv2.resize(frame2, (960,540))
-                        final = cv2.hconcat([frame, frame2])
-                    else: final = frame
-                        
-                    final, xcoord, ycoord, text = self.update_frame(final, time)
+            height, width, _ = frame.shape
+            resize = (height != 540 or width!=960)
 
-                    if show_output:
-                        cv2.imshow(sub, final)
-                    out.write(final)
-
-                    csv_writer.writerow([sub, time, frameId, xcoord, ycoord, text, ""])
-                    
-                    key = cv2.waitKey(1)
-                    # press 'q' to quit
-                    if key == ord('q'):
-                        break                           
-                    
-        cap.release()
-        if task_file is not None:
-            cap2.release()
-        out.release()
-        # print("Done: " + sub)
-        cv2.destroyAllWindows()
-                
-        output.seek(0) 
-        df = pd.read_csv(output)
-        return df
+            while (cap.isOpened()):
+                ret, frame = cap.read()
+                frameId = cap.get(1) #current frame number
+                if (ret == False or ret2 == False):
+                    break
+                if (frameId % frameval == 0):
+                    time = cap.get(cv2.CAP_PROP_POS_MSEC)
+                    if time >= self.start and time <= self.end:
+                        if resize: frame = cv2.resize(frame, (960,540))                           
+                        draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
+                        frame = self.determine_gaze(frame)
+                        if draw_pupils: 
+                            cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
+                            cv2.circle(frame, right_coords, 3, (255, 255, 0), 1)  
+                            # cv2.rectangle(frame,(self.gaze.left,self.gaze.top),(self.gaze.right,self.gaze.bottom),(0,255,0),2)
+                        # concat frames
+                        if task_file is not None:
+                            ret2, frame2 = cap2.read()   
+                            if ret2==False: break
+                            frame2 = cv2.resize(frame2, (960,540))
+                            final = cv2.hconcat([frame, frame2])
+                        else: final = frame
+                        final, xcoord, ycoord, text = self.update_frame(final, time)
+                        out.write(final)
+                        csv_writer.writerow([sub, time, frameId, xcoord, ycoord, text, ""])
+                        key = cv2.waitKey(1)
+                        # press 'q' to quit
+                        if key == ord('q'):
+                            break                                 
+            cap.release()
+            if task_file is not None: cap2.release()
+            out.release()
+            cv2.destroyAllWindows()
+            output.seek(0) 
+            df = pd.read_csv(output)
+            return df, True
+        return None, False
             
-    def format_output(self, videofile, task_file, subDir, expDir, df, aoi_file, stim_df):
+    def format_output(self, videofile, df, aoi_file, stim_df):
         sub, ext = os.path.splitext(videofile)
-        taskname = ""
-        if task_file is not None:
-            taskname = str(os.path.basename(task_file)[0:-4])
-            if taskname in str(sub):
-                taskname = ""
-            else:
-                taskname = "_" + taskname
-            
-        if aoi_file != "":
-            aois =  pd.read_csv(os.path.abspath(os.path.join(expDir, aoi_file)))
+        if aoi_file is not None:
+            aois =  pd.read_csv(aoi_file)
             df["Tag"] = None
             # Use a vectorized operation
             for _, aoi in aois.iterrows():
@@ -770,24 +712,10 @@ class OWLET_CNN(object):
                     (df["Y-coord"] >= aoi["Y1"]) & (df["Y-coord"] < aoi["Y2"])
                 )
                 df.loc[mask, "Tag"] = aoi["AOI"]
-
-            # for i in range(len(df)): 
-            #     for j in range(len(aois)):
-            #         if df.loc[i, "X-coord"] in range(aois.loc[j, 'X1'],aois.loc[j, 'X2']) \
-            #             and df.loc[i, "Y-coord"] in range(aois.loc[j, 'Y1'],aois.loc[j, 'Y2']):
-            #             df.loc[i, "Tag"] = aois.loc[j, 'AOI']
-            #             break
-   
         else:
             df["Tag"] = None  # Initialize column
             df.loc[df["X-coord"] < 480, "Tag"] = "Left"
             df.loc[(df["X-coord"] >= 480) & (df["X-coord"] < 960), "Tag"] = "Right"
-
-            # for i in range(len(df)):
-            #     if df.loc[i, "X-coord"] in range(0,480):
-            #         df.loc[i, "Tag"] = "Left"
-            #     elif df.loc[i, "X-coord"] in range(480,960):
-            #         df.loc[i, "Tag"] = "Right"
         
         if stim_df is not None:
             row_marker = 0
@@ -800,5 +728,5 @@ class OWLET_CNN(object):
                 if df.loc[i, "Time"] >= cur_time:
                     df.loc[i, "Trial"] = cur_label
                     row_marker += 1                        
-        csv_file =str(sub) + taskname + ".csv"
+        csv_file = videofile.replace(ext, ".csv")
         df.to_csv(csv_file, index = False)

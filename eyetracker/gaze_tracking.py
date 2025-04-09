@@ -13,7 +13,7 @@ class GazeTracking(object):
     and pupils and allows to know if the eyes are open or closed
     """
 
-    def __init__(self, mean, maximum, minimum, ratio, cwd):
+    def __init__(self, mean, maximum, minimum, ratio):
         self.frame = None
         self.eye_left = None
         self.eye_right = None
@@ -30,8 +30,9 @@ class GazeTracking(object):
         if ratio==0:
             self.leftright_eyeratio = 1
         # _predictor is used to get facial landmarks of a given face
-        self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
-        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
+        # self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
+        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
+        model_path = "./eyetracker/shape_predictor_68_face_landmarks.dat"
         self._predictor = dlib.shape_predictor(model_path)
         # eyepath = os.path.abspath(os.path.join(cwd, "=haarcascade_eye.xml"))
         # self.eye_classifier = cv2.CascadeClassifier(eyepath)

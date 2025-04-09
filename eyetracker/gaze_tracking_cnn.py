@@ -14,7 +14,7 @@ class GazeTrackingCNN(object):
     and pupils and allows to know if the eyes are open or closed
     """
 
-    def __init__(self, mean, maximum, minimum, ratio, cwd):
+    def __init__(self, mean, maximum, minimum, ratio):
         self.frame = None
         self.eye_left = None
         self.eye_right = None
@@ -24,7 +24,8 @@ class GazeTrackingCNN(object):
         self.faces = []
         # _face_detector is used to detect faces
         self._face_detector = dlib.get_frontal_face_detector()
-        cnn_model_path = os.path.abspath(os.path.join(cwd, "eyetracker/mmod_human_face_detector.dat"))
+        # cnn_model_path = os.path.abspath(os.path.join(cwd, "eyetracker/mmod_human_face_detector.dat"))
+        cnn_model_path = "./eyetracker/mmod_human_face_detector.dat"
         self._face_detector = dlib.cnn_face_detection_model_v1(cnn_model_path)
         self.eye_scale = mean
         self.blink_thresh = maximum * 1.1
@@ -38,9 +39,10 @@ class GazeTrackingCNN(object):
         if ratio==0:
             self.leftright_eyeratio = 1
         # _predictor is used to get facial landmarks of a given face
-        self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
-        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
-        model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks_GTX.dat"))
+        # self.cwd = cwd; #os.path.abspath(os.path.dirname(__file__))
+        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks.dat"))
+        # model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks_GTX.dat"))
+        model_path = "./eyetracker/shape_predictor_68_face_landmarks_GTX.dat"
         self._predictor = dlib.shape_predictor(model_path)
         self.top, self.bottom, self.left, self.right = 0, 540, 0, 960
         # self._predictor = dlib.shape_predictor(model_path)

@@ -6,17 +6,22 @@ Assumptions: this code only works when the mom is higher than the baby
 
 import cv2
 from .gaze_tracking import GazeTracking
+from .gaze_tracking_cnn import GazeTrackingCNN
+
 import numpy as np
 import math
 
 
 class LookingCalibration(object):
 
-    def __init__(self, show_output, cwd):
+    def __init__(self, show_output, use_cnn):
         self.frame = None
         self.eye_left = None
         self.eye_right = None
-        self.gaze = GazeTracking(2.7, 4, 1, 1, cwd) # eventually replace this with means from babies
+        if use_cnn:
+            self.gaze = GazeTrackingCNN(2.7, 4, 1, 1) # eventually replace this with means from babies
+        else:
+            self.gaze = GazeTracking(2.7, 4, 1, 1) # eventually replace this with means from babies
         self.hor_ratios = []
         self.hor_ratios2 = []
         self.left_ratios = []
@@ -29,7 +34,7 @@ class LookingCalibration(object):
         self.eye_areas = []
         self.timestamp = 0
         self.show_output = show_output
-        self.cwd = cwd
+        # self.cwd = cwd
         self.check_range_zero = 0
 
     def calibrate_eyes(self, file, calib_starttime):
