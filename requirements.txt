@@ -1,107 +1,42 @@
-altgraph @ file:///home/linux1/recipes/ci/altgraph_1611055153312/work
-appdirs @ file:///home/conda/feedstock_root/build_artifacts/appdirs_1603108395799/work
-appnope @ file:///opt/concourse/worker/volumes/live/6ca6f098-d773-4461-5c91-a24a17435bda/volume/appnope_1606859448531/work
-atomicwrites==1.4.0
-attrs==21.2.0
-audioread @ file:///Users/runner/miniforge3/conda-bld/audioread_1641610312096/work
-backcall @ file:///home/ktietz/src/ci/backcall_1611930011877/work
-black==21.9b0
-brotlipy==0.7.0
-certifi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_477u68wvzm/croot/certifi_1671487773341/work/certifi
-cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1613413892199/work
-chardet @ file:///Users/runner/miniforge3/conda-bld/chardet_1610093613037/work
-click==8.0.1
-cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/cloudpickle_1598400192773/work
-cmake==3.25.2
-codecov==2.1.12
-coverage==5.5
-coveralls==3.2.0
-cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1616851523607/work
-cycler==0.10.0
-Cython @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_39ff0b15-0673-48f6-8b41-ccbefca8af5em86n7cnc/croots/recipe/cython_1656941949557/work
-decorator==4.4.2
-distlib==0.3.2
-dlib==19.23.0
-docopt==0.6.2
-filelock==3.0.12
-fonttools==4.25.0
-idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1593328102638/work
-imageio @ file:///home/conda/feedstock_root/build_artifacts/imageio_1594044661732/work
-imageio-ffmpeg @ file:///home/conda/feedstock_root/build_artifacts/imageio-ffmpeg_1621542018480/work
-iniconfig==1.1.1
-ipykernel @ file:///opt/concourse/worker/volumes/live/b72ce213-516a-4998-6411-bacb2eb6d5d1/volume/ipykernel_1607452776186/work/dist/ipykernel-5.3.4-py3-none-any.whl
-ipython @ file:///opt/concourse/worker/volumes/live/53a0fafb-1ff1-44d4-4ba9-874c42807e28/volume/ipython_1617120878135/work
-ipython-genutils @ file:///tmp/build/80754af9/ipython_genutils_1606773439826/work
-jedi @ file:///opt/concourse/worker/volumes/live/fb4a9bd9-ce20-4358-4d29-83b0746d57b6/volume/jedi_1606932574534/work
-joblib @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_955tow_ysb/croot/joblib_1666298851241/work
-jupyter-client @ file:///tmp/build/80754af9/jupyter_client_1616770841739/work
-jupyter-core @ file:///opt/concourse/worker/volumes/live/d225f67f-0726-47b9-4510-c6aff5625ca4/volume/jupyter_core_1612213300495/work
-kiwisolver @ file:///opt/concourse/worker/volumes/live/f8867fdb-2fa2-4145-73d9-4d6f6dad5f7c/volume/kiwisolver_1612282424136/work
-librosa @ file:///home/conda/feedstock_root/build_artifacts/librosa_1622025601369/work
-llvmlite==0.37.0
-macholib @ file:///home/linux1/recipes/ci/macholib_1611055836792/work
-matplotlib @ file:///opt/concourse/worker/volumes/live/ea31f923-d5bd-4af7-6d95-b910b4a0fa5f/volume/matplotlib-suite_1628011455335/work
-more-itertools==8.10.0
-moviepy==1.0.1
-munkres==1.1.4
-mypy-extensions==0.4.3
-networkx==3.0
-numba @ file:///Users/runner/miniforge3/conda-bld/numba_1633674662583/work
-numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1622014651199/work
-olefile @ file:///home/conda/feedstock_root/build_artifacts/olefile_1602866521163/work
-opencv-python==4.5.5.64
-packaging @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_bet5qdixgt/croot/packaging_1671697440883/work
-pandas==1.2.4
-parso==0.7.0
-pathspec==0.9.0
-patsy==0.5.1
-pexpect @ file:///tmp/build/80754af9/pexpect_1605563209008/work
-pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
-Pillow==8.3.2
-platformdirs==2.4.0
-pluggy==1.0.0
-pooch @ file:///home/conda/feedstock_root/build_artifacts/pooch_1633958983611/work
-proglog==0.1.9
-prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1616415428029/work
-ptyprocess @ file:///tmp/build/80754af9/ptyprocess_1609355006118/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl
-py==1.10.0
-pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
-pycryptodome @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_27562593-71a8-45e2-8fc7-2dfadfb41e70j6urw04g/croots/recipe/pycryptodome_1658311003559/work
-Pygments @ file:///tmp/build/80754af9/pygments_1621606182707/work
-pyinstaller @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/croot-7o3wwtyh/pyinstaller_1643735602344/work
-pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1608055815057/work
-pyparsing @ file:///home/linux1/recipes/ci/pyparsing_1610983426697/work
-pyrtools==1.0.1
-PySocks @ file:///Users/runner/miniforge3/conda-bld/pysocks_1610291470465/work
-pytest==6.2.5
-pytest-cov==2.12.1
-python-dateutil @ file:///home/ktietz/src/ci/python-dateutil_1611928101742/work
-pytz @ file:///tmp/build/80754af9/pytz_1612215392582/work
-pyvyu==0.3.6
-PyWavelets==1.4.1
-pyzmq==20.0.0
-regex==2021.9.24
-requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1608156231189/work
-resampy==0.2.2
-scikit-image==0.19.3
-scikit-learn @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_1baff183-d525-4b50-b7da-d81be42a33b724ic9ktb/croots/recipe/scikit-learn_1658419416041/work
-scipy==1.7.1
-six @ file:///opt/concourse/worker/volumes/live/34b5b2b5-c9cb-44fb-4b8e-8a9a881bfa35/volume/six_1605205329242/work
-sklearn==0.0
-SoundFile @ file:///home/conda/feedstock_root/build_artifacts/pysoundfile_1607011569782/work
-spyder-kernels @ file:///opt/concourse/worker/volumes/live/47f263a7-4074-4a7d-5235-821ea39ee5e7/volume/spyder-kernels_1614030587892/work
-statsmodels==0.12.2
-tabulate==0.8.9
-threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
-tifffile==2023.2.3
-toml==0.10.2
-tomli==1.2.1
-tornado @ file:///opt/concourse/worker/volumes/live/2c1a63a2-006b-48ee-56b9-0cfe8b4927f9/volume/tornado_1606942321278/work
-tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1623518955413/work
-traitlets @ file:///home/ktietz/src/ci/traitlets_1611929699868/work
-typing-extensions==3.10.0.2
-urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1622056799390/work
-virtualenv==20.4.7
-wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
-wurlitzer @ file:///opt/concourse/worker/volumes/live/5d136bcd-c1ff-4f16-7406-fd203f8b08d6/volume/wurlitzer_1617224651834/work
-zepid==0.9.0
+altgraph==0.17.4
+audioread==3.0.1
+certifi==2024.2.2
+cffi==1.16.0
+charset-normalizer==3.3.2
+cryptography==42.0.5
+decorator==5.1.1
+dlib==19.24.4
+ffmpeg==1.4
+idna==3.7
+imutils==0.5.4
+joblib==1.4.0
+lazy_loader==0.4
+librosa==0.10.1
+llvmlite==0.42.0
+macholib==1.16.3
+numba==0.59.1
+numpy==1.26.4
+opencv-python==4.9.0.80
+packaging
+pandas==2.2.2
+pillow==10.3.0
+platformdirs==4.2.0
+pooch==1.8.1
+pycparser==2.22
+pyinstaller==6.11.0
+pyinstaller-hooks-contrib==2024.9
+pyparsing==3.1.2
+python-dateutil==2.9.0.post0
+pytz==2024.1
+requests==2.31.0
+scikit-learn==1.4.2
+scipy==1.13.0
+semantic-version==2.10.0
+setuptools==69.5.1
+six==1.16.0
+soundfile==0.12.1
+soxr==0.3.7
+threadpoolctl==3.4.0
+typing_extensions==4.11.0
+tzdata==2024.1
+urllib3==2.2.1
