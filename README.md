@@ -33,6 +33,7 @@ OWLET analyzes pre-recorded webcam or smartphone videos to estimate where an inf
 3. **Generates output**  
    - Saves a CSV file with gaze data for every frame  
    - Includes which part of the screen the infant looked at: `left`, `right`, or `away`
+
 OWLET also includes optional features that allow you to:
 - **Auto-detect task start time**  
   - Matches the audio in the infant’s video with the task video to find where the task begins
