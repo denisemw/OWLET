@@ -18,132 +18,139 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. If you use this software in your research, please cite as: <br><br> Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods. <br><br> Instructions for downloading and running the source code for OWLET is below. In addition, a beta version of a MacOS app to run OWLET through a user interface can be found at: https://denisewerchan.com/owlet</p>
+<p align = “left”>Thanks for checking out our software! OWLET is designed to process infant gaze and looking behavior using webcam videos recorded on laptops or smartphones. Instructions for downloading and running the source code for OWLET is below. In addition, a user guide, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet. If you use this software in your research, please cite as: 
   
-  
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-### User Guide
-<p align = “left”>A user guide for OWLET, which describes options for processing gaze data with OWLET in more detail, can be found at: https://denisewerchan.com/owlet <br><br><br></p>  
-
-  
-  
-### OWLET was built using Python v. 3.8.8. with 
-
-* [opencv]( https://pypi.org/project/opencv-python/)
-* [dlib]( http://dlib.net)
-* [numpy]( https://numpy.org/)
-* [pandas]( https://pandas.pydata.org/)
-* [scipy]( https://scipy.org/)
-* [librosa]( https://librosa.org/doc/latest/index.html/)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
+```bash
+Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Open-Source Method for Infant Gaze Tracking using Smartphone and Webcam Recordings. Behavior Research Methods.
+   ```
 ## How it works
+OWLET analyzes pre-recorded webcam or smartphone videos to estimate where an infant was looking during a task. Here's what it does:
+1. **Calibrates gaze**  
+   - Uses default settings based on prior data (Werchan et al., 2023)  
+   - Or, uses a custom calibration video of the infant looking left, right, up, and down (if provided)
+2. **Estimates gaze for each frame**  
+   - Determines where the infant was looking (x/y coordinates on the screen)
+3. **Generates output**  
+   - Saves a CSV file with gaze data for every frame  
+   - Includes which part of the screen the infant looked at: `left`, `right`, or `away`
 
-For a given, pre-recorded webcam/smartphone video, OWLET will:
-* Calibrate the subject's gaze using default settings (determined using generalized estimates from prior data, see Werchan et al., 2023) or by using a custom calibration video of the subject looking to the left, right, top, and bottom of the smartphone/computer screen (if available)
-* Determine the subject's point-of-gaze (x/y coordinate estimates of where they were fixating on teh screen) for each frame of the video
-* Save a CSV file with the frame-by-frame x/y point-of-gaze coordinates and the screen region that the subject's point-of-gaze fell within (left, right, or away from the screen)
-
-OWLET also provides the following additional options:
-* Automatically determine the time that the task begins in the subject's pre-recorded video by matching the auditory pattern of the subject's video with the auditory pattern of the video shown to the subject
-* Integrate the frame-by-frame CSV output with information on the trial timings
-* Ability to specify custom areas of interest (AOIs) when tagging the region of subject's point of gaze in the CSV output
-* Combine the subject's pre-recorded video with a video of the subject's point-of-gaze overlayed on the task video 
+OWLET also includes optional features that allow you to:
+- **Auto-detect task start time**  
+  - Matches the audio in the infant’s video with the task video to find where the task begins
+- **Integrate trial info**  
+  - Links frame-by-frame gaze with trial start times (if a `trials.csv` file is provided)
+- **Use custom AOIs**  
+  - Tags gaze data using custom areas of interest (if an `AOIs.csv` file is provided)
+- **Create an overlaid video to visualize gaze patterns**  
+  - Combines the infant’s video with the task video and overlays gaze points on it
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Set-up guide for Mac OS Users 
 
-### 1. Install miniconda following the directions [here](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html)
-
-### 2. Install OWLET by cloning the GitHub repository:
-
+### ✅ Step 1: Clone the GitHub repository:
+1. Open **Terminal** (Press ⌘ + Space, type “Terminal”, hit Enter).
+2. Copy and paste this line and press Enter:
    ```sh
    git clone https://github.com/denisemw/OWLET.git
    ```
-### 3. Navigate to the OWLET directory and install required dependenices:
-  
-   ```sh
-   cd /path/to/OWLET
-   conda env create -n owlet_env -f owlet_environment.yml
-   conda activate owlet_env
-   ```
+### ✅ Step 2: Install Homebrew (if you don’t already have it)
+Homebrew is a package manager for Mac.
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+> When it's done, run:
+```bash
+brew doctor
+```
+Make sure it says "Your system is ready to brew."
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+### ✅ Step 3: Install system dependencies
+These are tools that the Python packages need under the hood:
+```bash
+brew install cmake ffmpeg pkg-config
+brew install libomp # Needed for `numba` and `scikit-learn` on some Macs
+```
+### ✅ Step 4: Install Python (if not already installed)
+We recommend installing Python via Homebrew to avoid messing with the Mac system Python.
+```bash
+brew install python
+```
+### ✅ Step 5: Create and activate a virtual environment (recommended)
+Create and activate a virtual environment to keep dependencies isolated:
+```bash
+python -m venv owlet_env
+source owlet_env/bin/activate
+```
+### ✅ Step 6: Upgrade pip and install dependencies
+We recommend using the 'requirements.txt' file to install dependencies:
+```bash
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+### 🧼 Optional: If Installation Fails
+If you run into errors with `dlib`, run this:
+```sh
+brew install boost boost-python3
+```
+And then retry the install with:
+```sh
+pip install dlib
+```
 
-<!-- SETTING UP YOUR EXPERIMENT FOR OWLET -->
-## Setting up your experiment for OWLET
-
-### 1. Create a directory with the subject videos
-
-Create a directory that contains your subject video(s) and the optional corresponding calibration video(s).
-
-* If calibration files are inlcuded in the directory, they should have the same name as the subject videos with ‘_calibration’ added at the end
-
-* If calibration files are not included in the same directory, OWLET will process the videos using default settings.
-  
-
-### 2. (optional) Create a directory with the task information
-
-This step is optional, but will allow you to automatically link the frame-by-frame eye tracking data with information about the task. To do this, create a folder(s) that specifies optional information for each task(s):
-
-A video of the task in .mov or .mp4 format (maximum frame rate of 30 fps)
-* This will save a video of the subject's point-of-gaze overlayed on the task video.
-
-A csv file with trial timings
-* This will tag the start of each trial in the frame-by-frame csv output 
-
-A csv file with x/y areas of interest (AOIs)
-* This will tag which custom AOI that the child's’s point-of-gaze was in for each video frame in the csv output; 
-
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-  
   <!-- RUNNING OWLET -->
-## Running OWLET using Terminal commands
+  ## Running OWLET
+You can use OWLET in two ways: with a simple graphical interface (GUI), or through the command line.
+### Option 1: Run with the GUI (easiest)
+Just run this command:
+```bash
+python OWLET.py
+```
+A window will pop up where you can select the folder with your subject videos. You can also optionally add task info like:
+* The task video that was shown to the subject
+* A file with trial start times
+* A file with Areas of Interest (AOIs)
 
-#### Before running OWLET, navigate to the directory where you installed OWLET and make sure the virtual environment is activated (if used):
+### Option 2: Run from the command line
+Basic usage:
 ```sh
-   cd /path/to/OWLET
-   conda activate owlet_env
-   ```
-
-#### To analyze a child's frame-by-frame gaze coordinates for the entire video recording, use the following:
-```sh
-   python owlet.py /path/to/subject/video.mp4
-   ```
-  
-#### To automatically link the frame-by-frame gaze output with information about the task, include the '--experiment_info' option:
-  
+python OWLET.py --subject_video /path/to/subject/videos
+```
+If you also want to include task files (like a task video or AOIs), use:
   ```sh
-   python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder
+   python OWLET.py /path/to/subject/videos --experiment_info /path/to/experiment/folder
    ```
+Make sure the experiment folder contains your task video and/or CSV files (`trials.csv`, `AOIs.csv`)
 
-### Additional tips
+<!-- OPTIONAL FILES -->
+## Optional task files
+OWLET lets you include extra files to help connect the gaze data with what was shown during the task. You can add the following files to an optional "task" folder:
 
-When task information is included using the '--experiment_info' option, OWLET will automatically find where the task began in the recorded video of the child by matching the audio patterns in the subject and task videos. This is helpful for automating processing, as it removes the need to manually trim the recordings. However, this can fail occasionally when an audio match is not found (e.g., if the subject video or task video does not contain sound). If you have issues with audio matching but still wish to automatically link the subject recordings with task information, follow these steps:
+1. **Task Video** (.mov or .mp4, max 30fps): If you include a video of the task, OWLET will overlay the infant’s gaze onto this video in the final annotated output.
 
-1. Manually trim the subject recording so that only the task of interest is in the video.
-2. Run OWLET using the '--override_audio_matching' option:
-   * python OWLET.py /path/to/subject/video --experiment_info /path/to/experiment/folder --override_audio_matching
+2. **Trial Info CSV** (`trials.csv`): This file should have a `Time` column (start time of each trial or condition) and a `Labels` column (name of each trial/condition). OWLET uses this to organize gaze data by trial or condition.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+3. **AOIs CSV** (`AOIs.csv`): Use this to define custom Areas of Interest (AOIs) on the task video. The file should have columns for `AOI`, `x1`, `y1`, `x2`, and `y2`, assuming a 960x540 resolution. If you don’t include this, OWLET will use default AOIs: Left, Right, and Away.
 
+<!-- AUDIO MATCHING -->
+## Audio matching
+If you include a task video, OWLET will try to automatically match the audio in the task video to the audio in the subject video. This trims the start of the subject video to sync with the task, so you don’t have to edit it manually.
+
+However, if OWLET can’t find an audio match (e.g., the task start is missing, there’s no sound, or background noise is too loud), it will skip processing that video.
+
+To override optional audio matching, use the '--override_audio_matching' flag:
+```sh
+   python OWLET.py --subject_video /path/to/subject/videos --experiment_info /path/to/experiment/folder --override_audio_matching
+```
 <!-- USAGE EXAMPLES -->
 ## Usage
-
-Below is an example of a Zoom video processed using OWLET.<br><br>
-  
+Below is an example of a Zoom video processed using OWLET:
 <div align="center">
 <h3 >OWLET Demo:</h3>
 <a href="https://github.com/denisemw/OWLET">
     <img src="eyetracker/Images/demo.gif" alt="OWLET Demo">
   </a>
 <div align="left">
-
 <p align="right">(<a href="#top">back to top</a>)</p>
-
 
 <!-- BEST PRACTICES -->
 ## Best Practices and Helpful Tips
@@ -154,9 +161,7 @@ OWLET works best with high quality videos, and some tips are shown below. In add
 <a href="https://github.com/denisemw/OWLET/">
     <img src="eyetracker/Images/owlet_reqs.png" alt="Best Practices" width="360" height="432">
   </a>
-
 <div align="left">
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- LICENSE -->
