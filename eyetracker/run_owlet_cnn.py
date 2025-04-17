@@ -144,8 +144,8 @@ class OWLET_CNN(object):
             self.threshold = .1/6 
         if self.range_yvals < .1:
             self.threshold = .1/6  
-        self.x_scale_value = 960/(self.range_xvals * .8)
-        self.x_scale_value2 = 960/(self.range_xvals2 * .8)
+        self.x_scale_value = 960/(self.range_xvals * 1)
+        self.x_scale_value2 = 960/(self.range_xvals2 * 1)
         self.y_scale_value = 540/(self.range_yvals * .8)
         self.y_scale_value_left = 540/(self.range_yvals_left * .8)
         self.y_scale_value_right = 540/(self.range_yvals_right * .8)
