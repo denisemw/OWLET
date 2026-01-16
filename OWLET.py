@@ -7,10 +7,9 @@ Created on Mon Aug 22 18:57:55 2022
 """
 import sys
 sys.path.append("eyetracker")
-import eyetracker.OWLET_GUI
+from eyetracker import OWLET_GUI
 import os
 import argparse
-from eyetracker import run_owlet
 from eyetracker import run_owlet_cnn
 import os
 from pathlib import Path
@@ -74,7 +73,6 @@ def main():
             videos = [ x for x in videos if "Calibration" not in x ]
 
         
-        show_output = False
         stim_df = None        
         
         calibVideos = glob.glob('*.mp4') + glob.glob('*.mov')
@@ -84,7 +82,7 @@ def main():
             if args.cnn: 
                 owlet = run_owlet_cnn.OWLET_CNN()
                 print("cnn")
-            else: owlet = run_owlet.OWLET()
+            else: owlet = run_owlet_cnn.OWLET_CNN()
             taskVideo, calibVideo, aois, stim_file, expDir, taskName = None, None, "", None, None, ""
             
             # contains optional experiment info (task video, aois, and stimulus/trial timing info)
@@ -125,8 +123,7 @@ def main():
             calibVideo = [ x for x in calibVideos_tmp if "annotated" not in x ]
             print(calibVideo)
         
-            if args.display_output:
-                show_output = True
+    
           
             if taskVideo is not None:
                 experiment_name = os.path.basename(os.path.normpath(expDir))
@@ -147,7 +144,7 @@ def main():
             
             if calibVideo is not None and len(calibVideo) == 1:
                 calibVideo = os.path.abspath(os.path.join(subDir, calibVideo[0]))
-                owlet.calibrate_gaze(calibVideo, show_output, cwd)
+                owlet.calibrate_gaze(cwd, calibVideo)
             
                 
             
@@ -163,8 +160,8 @@ def main():
                         exit()
         
             
-            df = owlet.process_subject(cwd, subVideo, subDir, show_output, taskVideo, False)
-            owlet.format_output(subVideo, taskVideo, subDir, expDir, df, aois, stim_df)
+            df = owlet.process_subject(cwd, subVideo, taskVideo)
+            owlet.format_output(subVideo, taskVideo, expDir, df, aois, stim_df)
     
     
 if __name__ == '__main__':

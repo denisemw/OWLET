@@ -14,7 +14,7 @@ from tkinter import messagebox
 from PIL import ImageTk, Image
 import os
 import tkinter.font as font
-from eyetracker.run_owlet import OWLET
+from eyetracker.run_owlet_cnn import OWLET_CNN
 from pathlib import Path
 import webbrowser
 import glob
@@ -25,7 +25,6 @@ class OWLET_Interface(object):
     def __init__(self, cwd):
         """Returns the frame with pupils highlighted"""
         
-        self.show_output = False
         self.stim_df = None
         # contains subject video (and calibration video if desired)
         self.subVideo = None
@@ -170,15 +169,21 @@ class OWLET_Interface(object):
             
             for video in self.videos:
                 
-                owlet = OWLET()
+                owlet = OWLET_CNN()
                 # print(video, self.taskVideo)
                 task = None
                 subname , ext = os.path.splitext(video)
                 subname = subname.lstrip()
+                print(subname)
                 # subname = os.path.basename(video)
                 self.subVideo = os.path.abspath(os.path.join(self.subDir, video))
+                
+                if self.taskVideo is not None and len(self.taskVideo) == 1:
+                    task = os.path.abspath(os.path.join(self.expDir, self.taskVideo[0]))
+                    experiment_name = os.path.basename(os.path.normpath(self.expDir))
+                    experiment_name = '_' + experiment_name
+                    subname = subname.replace(experiment_name, "")
 
-    
                 cab = [ x for x in self.calibVideos if str(subname) in x ]
 
                 file_name =  str(self.subDir) + '/' + str(subname) + "_error_log" + ".txt"   
@@ -196,7 +201,7 @@ class OWLET_Interface(object):
                 if cab is not None and len(cab) == 1:
                     print("Calibrating ", str(subname))
                     cab = os.path.abspath(os.path.join(self.subDir, cab[0]))
-                    owlet.calibrate_gaze(cab, False, self.cwd)
+                    owlet.calibrate_gaze(self.cwd, cab)
                 
                     
                 found_match = True
@@ -219,8 +224,9 @@ class OWLET_Interface(object):
                 
                 os.chdir(self.subDir)
                 # if found_match == True:
-                df = owlet.process_subject(self.cwd, video, self.subDir, False, task, False)
-                owlet.format_output(video, task, self.subDir, self.expDir, df, self.aois, self.stim_df)
+                df = owlet.process_subject(self.cwd, video, task)
+                
+                owlet.format_output(video, task, self.expDir, df, self.aois, self.stim_df)
                 # message = message + str(subname) + " finished\n"
                 # showMessage(message)
             tk.messagebox.showinfo(title="Processing finished.", message=("Results saved in " + str(self.subDir)))
@@ -420,7 +426,7 @@ class OWLET_Interface(object):
                         exit()
             
        
-            df = owlet.process_subject(cwd = self.cwd, videofile = video, subDir = self.subDir, show_output = False, task_file = self.taskVideo, calib=False)
+            df = owlet.process_subject(cwd = self.cwd, videofile = video, subDir = self.subDir,  task_file = self.taskVideo, calib=False)
             owlet.format_output(video, self.taskVideo, self.subDir, self.expDir, df, self.aois, self.stim_df)
     
     
