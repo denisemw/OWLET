@@ -58,7 +58,7 @@ class GazeTrackingCNN(object):
         detections = self._face_detector(frame, 1)
 
         if len(detections) == 0:
-            return False
+            return False, None
 
             ## if there are two faces detected, take the lower face
         if len(detections) > 1 and (detections[1].rect.bottom() > detections[0].rect.bottom()):
