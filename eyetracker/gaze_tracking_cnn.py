@@ -225,7 +225,7 @@ class GazeTrackingCNN(object):
             yavg = scale * yavg 
             return xavg, yavg
         else:
-            return None, None, None, None
+            return None, None
         
 
 
