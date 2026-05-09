@@ -71,6 +71,6 @@ class Pupil(object):
               self.x = None
               self.y = None
               self.radius = None
-              print("cant find pupils")
+
                 
 
