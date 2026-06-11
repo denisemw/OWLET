@@ -5,7 +5,7 @@ import dlib
 from .eye_cnn import EyeCNN
 import numpy as np
 # import face_recognition
-CONFIDENCE_THRESHOLD = 7
+CONFIDENCE_THRESHOLD = 20
 
 class GazeTrackingCNN(object):
     """
@@ -121,6 +121,7 @@ class GazeTrackingCNN(object):
             success, bbox = self.detect_and_init_tracker(frame)
         else:
             confidence, bbox = self.update_tracker(frame)
+            print(confidence)
             success = True
             if confidence < CONFIDENCE_THRESHOLD:
                 self.tracking = False
