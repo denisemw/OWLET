@@ -26,8 +26,8 @@ Werchan, D. M., Thomason, M. E., & Brito, N. H. (2022). OWLET: An Automated, Ope
 ## How it works
 OWLET analyzes pre-recorded webcam or smartphone videos to estimate where an infant was looking during a task. Here's what it does:
 1. **Calibrates gaze**  
-   - Uses default settings based on prior data (Werchan et al., 2023)  
-   - Or, uses a custom calibration video of the infant looking left, right, up, and down (if provided)
+   - Uses default settings based on averages from prior data (Werchan et al., 2023)  
+   - Or, uses a custom calibration video of the infant looking left, right, up, and down (HIGHLY recommended)
 2. **Estimates gaze for each frame**  
    - Determines where the infant was looking (x/y coordinates on the screen)
 3. **Generates output**  
@@ -100,6 +100,14 @@ pip install dlib
   <!-- RUNNING OWLET -->
   ## Running OWLET
 You can use OWLET in two ways: with a simple graphical interface (GUI), or through the command line.
+
+If you are using calibration videos (HIGHLY recommended), they should be saved in the same directory as the subject videos and should have the exact same name except with '_calibration.mp4' appended (e.g., the calibration video for subject1_task.mp4 should be named subject1_task_calibration.mp4).
+
+A few additional notes on calibration videos:
+ * If you are planning a study, you are welcome to use our calibration video, which can be downloaded <a href="eyetracker/Images/calibration_5point.mp4">here</a>.
+ * If a calibration was not conducted at the beginning of the task, any short video clip that shows the infant looking to the left-most and right-most areas of the screen should work as a substitute calibration video. We recommend keeping clips under 20 seconds. 
+ * OWLET assumes that infants looked at both the left-most and right-most calibration points in the calibration recording, and that they did not look away from the screen during calibration. If the infant looks away from the screen or does not look at both the left- and right-most calibration points, the eye tracking accuracy will likely be poor. In these cases, we recommend either using default settings or cropping out instances where the infant was looking away during the video.
+
 ### Option 1: Run with the GUI (easiest)
 Just run this command:
 ```bash
@@ -120,6 +128,12 @@ If you also want to include task files (like a task video or AOIs), use:
    python OWLET.py /path/to/subject/videos --experiment_info /path/to/experiment/folder
    ```
 Make sure the experiment folder contains your task video and/or CSV files (`trials.csv`, `AOIs.csv`)
+
+
+The paths to the subject video must be specified by the user prior to running OWLET. The
+user is required to select a folder that has the subject video(s) and the optional
+corresponding calibration video(s). Please note that:
+
 
 <!-- OPTIONAL FILES -->
 ## Optional task files
