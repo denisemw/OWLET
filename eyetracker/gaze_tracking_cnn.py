@@ -14,24 +14,6 @@ class GazeTrackingCNN(object):
     and pupils and allows to know if the eyes are open or closed
     """
 
-    MODEL_POINTS = np.array([
-        (0.0, 0.0, 0.0),          # Nose tip
-        (0.0, -330.0, -65.0),     # Chin
-        (-225.0, 170.0, -135.0),  # Left eye left corner
-        (225.0, 170.0, -135.0),   # Right eye right corner
-        (-150.0, -150.0, -125.0), # Left Mouth corner
-        (150.0, -150.0, -125.0)   # Right mouth corner
-    ], dtype=np.float64)
-    
-    DIST_COEFFS = np.zeros((4,1))
-
-    FOCAL_LENGTH = 960
-    CAMERA_MATRIX = np.array([
-        [FOCAL_LENGTH, 0, 960 / 2],
-        [0, FOCAL_LENGTH, 540 / 2],
-        [0, 0, 1]
-    ], dtype=np.float64)
-    
     def __init__(self, mean, maximum, minimum, ratio, cwd):
         self.frame = None
         self.eye_left = None
@@ -175,39 +157,6 @@ class GazeTrackingCNN(object):
         
         return draw_pupils, left_coords, right_coords 
 
-    # def get_image_points(self):
-    #     image_points = np.array([
-    #         (self.landmarks.part(30).x, self.landmarks.part(30).y),  # Nose
-    #         (self.landmarks.part(8).x, self.landmarks.part(8).y),    # Chin
-    #         (self.landmarks.part(36).x, self.landmarks.part(36).y),  # Left eye
-    #         (self.landmarks.part(45).x, self.landmarks.part(45).y),  # Right eye
-    #         (self.landmarks.part(48).x, self.landmarks.part(48).y),  # Left mouth
-    #         (self.landmarks.part(54).x, self.landmarks.part(54).y)   # Right mouth
-    #     ], dtype=np.float64)
-
-    #     success, rotation_vec, translation_vec = cv2.solvePnP(
-    #         self.MODEL_POINTS,
-    #         image_points,
-    #         self.CAMERA_MATRIX,
-    #         self.DIST_COEFFS,
-    #         flags=cv2.SOLVEPNP_ITERATIVE
-    #     )
-
-    #     rotation_matrix, _ = cv2.Rodrigues(rotation_vec)
-    #     # forward = rotation_matrix @ np.array([[0], [0], [1]])
-    #     # fx, fy, fz = forward.flatten()
-    #     # score = fz / np.linalg.norm(forward)
-
-    #     proj_matrix = np.hstack((rotation_matrix, translation_vec))
-
-    #     _, _, _, _, _, _, euler_angles = cv2.decomposeProjectionMatrix(proj_matrix)
-
-    #     pitch, yaw, roll = euler_angles.flatten()
-    #     roll = (roll + 180) % 360 - 180
-    #     # print(score)
-    #     return yaw, pitch, roll 
-
-    
     def get_eye_distance(self):
         try:
             if self.landmarks:
@@ -226,27 +175,21 @@ class GazeTrackingCNN(object):
     
     def pupil_left_coords(self):
         """Returns the xy coordinates and radius of the left pupil"""
-        if self.eye_left and self.eye_right:
-            if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:
-                x = self.eye_left.origin[0] + self.eye_left.pupil.x
-                y = self.eye_left.origin[1] + self.eye_left.pupil.y
-                r = self.eye_left.pupil.radius
-                return (x, y), r
-            else:
-                return (None, None), None
+        if self.pupils_located:
+            x = self.eye_left.origin[0] + self.eye_left.pupil.x
+            y = self.eye_left.origin[1] + self.eye_left.pupil.y
+            r = self.eye_left.pupil.radius
+            return (x, y), r
         else:
             return (None, None), None
 
     def pupil_right_coords(self):
         """Returns the xy coordinates and radius  of the right pupil"""
-        if self.eye_left and self.eye_right:
-            if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:
-                x = self.eye_right.origin[0] + self.eye_right.pupil.x
-                y = self.eye_right.origin[1] + self.eye_right.pupil.y
-                r = self.eye_right.pupil.radius
-                return (x, y), r
-            else:
-                return (None, None), None
+        if self.pupils_located:
+            x = self.eye_right.origin[0] + self.eye_right.pupil.x
+            y = self.eye_right.origin[1] + self.eye_right.pupil.y
+            r = self.eye_right.pupil.radius
+            return (x, y), r
         else:
             return (None, None), None
         
@@ -279,32 +222,30 @@ class GazeTrackingCNN(object):
         values are determined during calibration or are
         set to average values imputed from prior videos
         """
-        if self.eye_left and self.eye_right:
-            if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:            
-                xleft = (self.eye_left.pupil.x ) /  self.eye_left.width 
-                xright = (self.eye_right.pupil.x ) / self.eye_right.width 
-                xavg = (xleft + xright)/2
+        if self.pupils_located:
+            
+            xleft = (self.eye_left.pupil.x ) /  self.eye_left.width 
+            xright = (self.eye_right.pupil.x ) / self.eye_right.width 
+            xavg = (xleft + xright)/2
 
-                left_eye = np.array([self.eye_left.pupil.x, self.eye_left.pupil.y])
-                distance1 = np.linalg.norm(left_eye - self.eye_left.top)
-                distance2 = np.linalg.norm(left_eye - self.eye_left.bottom)
-                left_distance = distance1 + distance2
-                yleft = distance1/left_distance
+            left_eye = np.array([self.eye_left.pupil.x, self.eye_left.pupil.y])
+            distance1 = np.linalg.norm(left_eye - self.eye_left.top)
+            distance2 = np.linalg.norm(left_eye - self.eye_left.bottom)
+            left_distance = distance1 + distance2
+            yleft = distance1/left_distance
 
-                right_eye = np.array([self.eye_right.pupil.x, self.eye_right.pupil.y])
-                distance1 = np.linalg.norm(right_eye - self.eye_right.top)
-                distance2 = np.linalg.norm(right_eye - self.eye_right.bottom)
-                right_distance = distance1 + distance2
-                yright = distance1/right_distance
+            right_eye = np.array([self.eye_right.pupil.x, self.eye_right.pupil.y])
+            distance1 = np.linalg.norm(right_eye - self.eye_right.top)
+            distance2 = np.linalg.norm(right_eye - self.eye_right.bottom)
+            right_distance = distance1 + distance2
+            yright = distance1/right_distance
 
-                yavg = (yleft + yright)/2
-                
-                scale =  self.eye_scale / self.eye_ratio()
-                
-                yavg = scale * yavg 
-                return xavg, yavg
-            else:
-                return None, None
+            yavg = (yleft + yright)/2
+            
+            scale =  self.eye_scale / self.eye_ratio()
+            
+            yavg = scale * yavg 
+            return xavg, yavg
         else:
             return None, None
         
@@ -316,13 +257,10 @@ class GazeTrackingCNN(object):
         determined during calibration or are set to average 
         values imputed from prior videos.
         """
-        if self.eye_left and self.eye_right:
-            if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:
-                pupil_left = (self.eye_left.pupil.x ) / self.eye_left.width # (self.eye_left.center[0] * 2) 
-                pupil_right = (self.eye_right.pupil.x ) /  self.eye_right.width #  (self.eye_right.center[0] * 2)
-                return pupil_left, pupil_right
-            else:
-                return None, None
+        if self.pupils_located:
+            pupil_left = (self.eye_left.pupil.x ) / self.eye_left.width # (self.eye_left.center[0] * 2) 
+            pupil_right = (self.eye_right.pupil.x ) /  self.eye_right.width #  (self.eye_right.center[0] * 2)
+            return pupil_left, pupil_right
         else:
             return None, None
 
@@ -330,14 +268,14 @@ class GazeTrackingCNN(object):
         """Returns true if the current blinking ratio is greater than 
         the threshold set during calibration
         """
-        if self.eye_left and self.eye_right:
+        if self.pupils_located:
             blinking_ratio = self.eye_ratio()
             return blinking_ratio > self.blink_thresh_upper or blinking_ratio < self.blink_thresh_lower
         
     def eye_ratio(self):
         """Returns the average width/height (blinking ratio) of left/right eyes"""
-        if self.eye_left and self.eye_right:
-            if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:            blinking_ratio = (self.eye_left.blinking + self.eye_right.blinking)/2 # (left_ratio + right_ratio)/2
+        if self.pupils_located:      
+            blinking_ratio = (self.eye_left.blinking + self.eye_right.blinking)/2 # (left_ratio + right_ratio)/2
         else:
             blinking_ratio = 1
         return blinking_ratio
@@ -346,14 +284,13 @@ class GazeTrackingCNN(object):
     def annotated_frame(self):
         """Returns the frame with pupils highlighted"""
 
-        try: 
-            # if self.eye_left.pupil.x and self.eye_left.pupil.y and self.eye_right.pupil.x and self.eye_right.pupil.y:
+        if self.pupils_located:
 
             left_coords, _ = self.pupil_left_coords()
             right_coords, _ = self.pupil_right_coords()
             return True, left_coords, right_coords
-        except:
-            return False, None, None
+ 
+        return False, None, None
             
             # uncomment to display points around the eyes and face
             # points = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]

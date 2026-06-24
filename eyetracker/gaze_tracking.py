@@ -3,10 +3,7 @@ import os
 import cv2
 import dlib
 from .eye import Eye
-import numpy as np
 # import face_recognition
-
-
 
 
 class GazeTracking(object):
@@ -15,8 +12,6 @@ class GazeTracking(object):
     It provides useful information like the position of the eyes
     and pupils and allows to know if the eyes are open or closed
     """
-
-
 
     def __init__(self, mean, maximum, minimum, ratio, cwd):
         self.frame = None
@@ -112,9 +107,6 @@ class GazeTracking(object):
         draw_pupils, left_coords, right_coords = self.annotated_frame()
         return draw_pupils, left_coords, right_coords 
     
-
-    
-        
     def pupil_left_coords(self):
         """Returns the xy coordinates and radius of the left pupil"""
         if self.pupils_located:

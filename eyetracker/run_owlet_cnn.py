@@ -241,13 +241,6 @@ class OWLET_CNN(object):
         
         # gets the horizontal gaze position scaled by eye area
         cur_x_left, cur_x_right = self.gaze.horizontal_gaze()
-
-        # yaw, pitch, roll = self.gaze.get_image_points()
-        MAX_YAW = 25
-        MAX_PITCH = 15
-        MAX_ROLL = 18
-
-
                             
         # gets the current, non-smoothed horizontal and vertical gaze positions
         cur_x, cur_y = self.gaze.xy_gaze_position()
@@ -259,14 +252,10 @@ class OWLET_CNN(object):
 
         eye_distance = self.gaze.get_eye_distance()
         
-        # head is so far turned that baby is not looking at screen
+                # head is so far turned that baby is not looking at screen
         if eye_distance is not None and (eye_distance < .67 or eye_distance > 1.5):
             self.is_looking = False
             self.num_looks_away += 1
-
-        # elif abs(yaw) > MAX_YAW :
-        #     self.is_looking = False
-        #     self.num_looks_away += 1
 
         # head is so far turned that baby is not looking at screen
         elif area_ratio is not None and (area_ratio < .5 or area_ratio > 2):
@@ -321,7 +310,6 @@ class OWLET_CNN(object):
             ycoord: the estimated y coordinate of the point-of-gaze
             self.text: the tag of the frame status (looking, saccade, or away)
         """
-        # print(timestamp)
         color = (255, 255, 0)
         xcoord, ycoord = None, None
         cur_x, cur_y = self.get_gazepoint(self.cur_fix_hor, self.cur_fix_ver, self.prior_x, self.prior_y)
@@ -437,13 +425,12 @@ class OWLET_CNN(object):
                 time = cap.get(cv2.CAP_PROP_POS_MSEC)
                 if time >= self.start:
                     if resize: frame = cv2.resize(frame, (960,540))  
-                    # print(time)
                 
                     
                     draw_pupils, left_coords, right_coords  = self.gaze.refresh(frame)
                     self.determine_gaze(frame)
 
-                    if draw_pupils and left_coords and right_coords and self.text != "away": 
+                    if draw_pupils and left_coords and right_coords: 
                         cv2.circle(frame, left_coords, 3, (255, 255, 0), 1)
                         cv2.circle(frame, right_coords, 3, (255, 255, 0), 1)                      
                     # concat frames
