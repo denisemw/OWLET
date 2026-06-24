@@ -5,7 +5,7 @@ import dlib
 from .eye_cnn import EyeCNN
 import numpy as np
 # import face_recognition
-CONFIDENCE_THRESHOLD = 20
+CONFIDENCE_THRESHOLD = 7
 
 class GazeTrackingCNN(object):
     """
@@ -21,7 +21,7 @@ class GazeTrackingCNN(object):
         self.face_index = 0
         self.face = None
         # _face_detector is used to detect faces
-        self._face_detector = dlib.get_frontal_face_detector()
+        # self._face_detector = dlib.get_frontal_face_detector()
         self.tracker = None
         self.tracking = False
         cnn_model_path = os.path.abspath(os.path.join(cwd, "eyetracker/mmod_human_face_detector.dat"))
@@ -39,6 +39,8 @@ class GazeTrackingCNN(object):
         # _predictor is used to get facial landmarks of a given face
         model_path = os.path.abspath(os.path.join(cwd, "eyetracker/shape_predictor_68_face_landmarks_GTX.dat"))
         self._predictor = dlib.shape_predictor(model_path)
+        print(cnn_model_path)
+        print(os.path.exists(cnn_model_path))
         
 
 
@@ -55,6 +57,7 @@ class GazeTrackingCNN(object):
             #    return True
             return False
     def detect_and_init_tracker(self, frame):
+
         detections = self._face_detector(frame, 1)
 
         if len(detections) == 0:
@@ -96,25 +99,46 @@ class GazeTrackingCNN(object):
         return confidence, bbox
     
 
+
     def _analyze(self):
-        color = self.frame  # BGR, for YuNet + tracker
+        rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        rgb = np.ascontiguousarray(rgb)
         gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-        
 
         if not self.tracking:
-            success, bbox = self.detect_and_init_tracker(color)
+            success, bbox = self.detect_and_init_tracker(rgb)
         else:
-            confidence, bbox = self.update_tracker(color)
+            confidence, bbox = self.update_tracker(rgb)
             success = True
             if confidence < CONFIDENCE_THRESHOLD:
                 self.tracking = False
                 self.tracker = None
-                success, bbox = self.detect_and_init_tracker(color)
+                success, bbox = self.detect_and_init_tracker(rgb)
 
         if success:
             self.landmarks = self._predictor(gray, bbox)
             self.eye_left  = EyeCNN(gray, self.landmarks, 0, self.leftpoint)
             self.eye_right = EyeCNN(gray, self.landmarks, 1, self.rightpoint)
+
+    # def _analyze(self):
+    #     color = self.frame  # BGR, for YuNet + tracker
+    #     gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        
+
+    #     if not self.tracking:
+    #         success, bbox = self.detect_and_init_tracker(color)
+    #     else:
+    #         confidence, bbox = self.update_tracker(color)
+    #         success = True
+    #         if confidence < CONFIDENCE_THRESHOLD:
+    #             self.tracking = False
+    #             self.tracker = None
+    #             success, bbox = self.detect_and_init_tracker(color)
+
+    #     if success:
+    #         self.landmarks = self._predictor(gray, bbox)
+    #         self.eye_left  = EyeCNN(gray, self.landmarks, 0, self.leftpoint)
+    #         self.eye_right = EyeCNN(gray, self.landmarks, 1, self.rightpoint)
 
     # def _analyze(self):
     #     """Detects the face and initialize Eye objects"""

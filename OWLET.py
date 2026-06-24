@@ -133,20 +133,17 @@ def main():
                 
             if stim_file is not None and len(stim_file) == 1:
                 success, stim_df = owlet.read_stim_markers(stim_file = os.path.join(expDir, stim_file[0]))
-            else:
-                success = False
                 if not success:
                     print("Trial markers file must have 'Time' and 'Label' columns.")
                     file = open(file_name, "w")
                     file.write("Incorrect experiment info -- Trial markers file must have 'Time' and 'Label' columns.\n")
                     file.close()
-                    #raise AssertionError - commented this out because it wasn't letting us process PA 
-            
+             
             if calibVideo is not None and len(calibVideo) == 1:
                 calibVideo = os.path.abspath(os.path.join(subDir, calibVideo[0]))
+                print(cwd)
+                print(calibVideo)
                 owlet.calibrate_gaze(cwd, calibVideo)
-            
-                
             
             if taskVideo is not None and len(taskVideo) == 1:
                 taskVideo = os.path.abspath(os.path.join(expDir, taskVideo[0]))

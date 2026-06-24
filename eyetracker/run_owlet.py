@@ -51,7 +51,7 @@ class OWLET(object):
         self.eyearea = -999
 
             
-    def calibrate_gaze(self, calib_file, show_output, cwd):
+    def calibrate_gaze(self, calib_file, cwd):
         """
         Initializes a calibration object and calibrates the extreme scaled
         and unscaled xy gaze positions, the mean/max/min eye blinking ratios, 
@@ -82,7 +82,7 @@ class OWLET(object):
             self.mean_eyeratio, self.maxeyeratio, self.mineyeratio = df.iloc[0, 22:25]
         
         else:
-            calib = LookingCalibration(show_output, cwd)
+            calib = LookingCalibration(cwd)
             ### FIX THIS ###
             # calib_audio = "/Users/werchd01/Dropbox/ORCA/Calibration.wav" 
             # self.convert_video_to_audio_ffmpeg(sub)
@@ -93,7 +93,7 @@ class OWLET(object):
             # else:
             calib_starttime = 0
             calib_endtime = 30000
-            calib.calibrate_eyes(calib_file, calib_starttime)
+            calib.calibrate_eyes(calib_file)
             
             ## get subject name from calib_file
             # sub_file = calib_file
