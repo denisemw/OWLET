@@ -113,35 +113,56 @@ class GazeTrackingCNN(object):
 
         return confidence, bbox
     
+
     def _analyze(self):
-        """Detects the face and initialize Eye objects"""
-     
-        frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        color = self.frame  # BGR, for YuNet + tracker
+        gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        
+
         if not self.tracking:
-            success, bbox = self.detect_and_init_tracker(frame)
+            success, bbox = self.detect_and_init_tracker(color)
         else:
-            confidence, bbox = self.update_tracker(frame)
-            print(confidence)
+            confidence, bbox = self.update_tracker(color)
             success = True
             if confidence < CONFIDENCE_THRESHOLD:
                 self.tracking = False
                 self.tracker = None
-                success, bbox = self.detect_and_init_tracker(frame)
+                success, bbox = self.detect_and_init_tracker(color)
 
         if success:
-            self.landmarks = self._predictor(frame, bbox)
-            self.eye_left = EyeCNN(frame, self.landmarks, 0, self.leftpoint)
-            self.eye_right = EyeCNN(frame, self.landmarks, 1, self.rightpoint)
-            try:
-                self.leftpoint = (self.eye_left.pupil.x, self.eye_left.pupil.y)
-                self.rightpoint = (self.eye_right.pupil.x, self.eye_right.pupil.y)
-            except:
-                self.leftpoint = None
-                self.rightpoint = None
-        else:
-                self.eye_left = None
-                self.eye_right = None
-                self.face = None
+            self.landmarks = self._predictor(gray, bbox)
+            self.eye_left  = EyeCNN(gray, self.landmarks, 0, self.leftpoint)
+            self.eye_right = EyeCNN(gray, self.landmarks, 1, self.rightpoint)
+
+    # def _analyze(self):
+    #     """Detects the face and initialize Eye objects"""
+     
+        
+    #     if not self.tracking:
+    #         success, bbox = self.detect_and_init_tracker(self.frame)
+    #     else:
+    #         confidence, bbox = self.update_tracker(self.frame)
+    #         print(confidence)
+    #         success = True
+    #         if confidence < CONFIDENCE_THRESHOLD:
+    #             self.tracking = False
+    #             self.tracker = None
+    #             success, bbox = self.detect_and_init_tracker(frame)
+    #     frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+    #     if success:
+    #         self.landmarks = self._predictor(frame, bbox)
+    #         self.eye_left = EyeCNN(frame, self.landmarks, 0, self.leftpoint)
+    #         self.eye_right = EyeCNN(frame, self.landmarks, 1, self.rightpoint)
+    #         try:
+    #             self.leftpoint = (self.eye_left.pupil.x, self.eye_left.pupil.y)
+    #             self.rightpoint = (self.eye_right.pupil.x, self.eye_right.pupil.y)
+    #         except:
+    #             self.leftpoint = None
+    #             self.rightpoint = None
+    #     else:
+    #             self.eye_left = None
+    #             self.eye_right = None
+    #             self.face = None
 
     def refresh(self, frame):
         """Refreshes the frame and analyzes it.
@@ -154,37 +175,37 @@ class GazeTrackingCNN(object):
         
         return draw_pupils, left_coords, right_coords 
 
-    def get_image_points(self):
-        image_points = np.array([
-            (self.landmarks.part(30).x, self.landmarks.part(30).y),  # Nose
-            (self.landmarks.part(8).x, self.landmarks.part(8).y),    # Chin
-            (self.landmarks.part(36).x, self.landmarks.part(36).y),  # Left eye
-            (self.landmarks.part(45).x, self.landmarks.part(45).y),  # Right eye
-            (self.landmarks.part(48).x, self.landmarks.part(48).y),  # Left mouth
-            (self.landmarks.part(54).x, self.landmarks.part(54).y)   # Right mouth
-        ], dtype=np.float64)
+    # def get_image_points(self):
+    #     image_points = np.array([
+    #         (self.landmarks.part(30).x, self.landmarks.part(30).y),  # Nose
+    #         (self.landmarks.part(8).x, self.landmarks.part(8).y),    # Chin
+    #         (self.landmarks.part(36).x, self.landmarks.part(36).y),  # Left eye
+    #         (self.landmarks.part(45).x, self.landmarks.part(45).y),  # Right eye
+    #         (self.landmarks.part(48).x, self.landmarks.part(48).y),  # Left mouth
+    #         (self.landmarks.part(54).x, self.landmarks.part(54).y)   # Right mouth
+    #     ], dtype=np.float64)
 
-        success, rotation_vec, translation_vec = cv2.solvePnP(
-            self.MODEL_POINTS,
-            image_points,
-            self.CAMERA_MATRIX,
-            self.DIST_COEFFS,
-            flags=cv2.SOLVEPNP_ITERATIVE
-        )
+    #     success, rotation_vec, translation_vec = cv2.solvePnP(
+    #         self.MODEL_POINTS,
+    #         image_points,
+    #         self.CAMERA_MATRIX,
+    #         self.DIST_COEFFS,
+    #         flags=cv2.SOLVEPNP_ITERATIVE
+    #     )
 
-        rotation_matrix, _ = cv2.Rodrigues(rotation_vec)
-        # forward = rotation_matrix @ np.array([[0], [0], [1]])
-        # fx, fy, fz = forward.flatten()
-        # score = fz / np.linalg.norm(forward)
+    #     rotation_matrix, _ = cv2.Rodrigues(rotation_vec)
+    #     # forward = rotation_matrix @ np.array([[0], [0], [1]])
+    #     # fx, fy, fz = forward.flatten()
+    #     # score = fz / np.linalg.norm(forward)
 
-        proj_matrix = np.hstack((rotation_matrix, translation_vec))
+    #     proj_matrix = np.hstack((rotation_matrix, translation_vec))
 
-        _, _, _, _, _, _, euler_angles = cv2.decomposeProjectionMatrix(proj_matrix)
+    #     _, _, _, _, _, _, euler_angles = cv2.decomposeProjectionMatrix(proj_matrix)
 
-        pitch, yaw, roll = euler_angles.flatten()
-        roll = (roll + 180) % 360 - 180
-        # print(score)
-        return yaw, pitch, roll 
+    #     pitch, yaw, roll = euler_angles.flatten()
+    #     roll = (roll + 180) % 360 - 180
+    #     # print(score)
+    #     return yaw, pitch, roll 
 
     
     def get_eye_distance(self):

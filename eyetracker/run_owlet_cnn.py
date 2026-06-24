@@ -242,7 +242,7 @@ class OWLET_CNN(object):
         # gets the horizontal gaze position scaled by eye area
         cur_x_left, cur_x_right = self.gaze.horizontal_gaze()
 
-        yaw, pitch, roll = self.gaze.get_image_points()
+        # yaw, pitch, roll = self.gaze.get_image_points()
         MAX_YAW = 25
         MAX_PITCH = 15
         MAX_ROLL = 18
@@ -264,9 +264,9 @@ class OWLET_CNN(object):
             self.is_looking = False
             self.num_looks_away += 1
 
-        elif abs(yaw) > MAX_YAW :
-            self.is_looking = False
-            self.num_looks_away += 1
+        # elif abs(yaw) > MAX_YAW :
+        #     self.is_looking = False
+        #     self.num_looks_away += 1
 
         # head is so far turned that baby is not looking at screen
         elif area_ratio is not None and (area_ratio < .5 or area_ratio > 2):
